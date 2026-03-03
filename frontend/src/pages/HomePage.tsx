@@ -50,36 +50,7 @@ function HomePage() {
           </div>
 
           <div className="space-y-3 md:space-y-4">
-            {[1, 2, 3].map((item) => (
-              <article
-                key={item}
-                className="group rounded-xl border border-border-subtle bg-bg-elevated-soft/70 p-4 transition-colors hover:border-accent-primary/60 md:p-5"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-primary" />
-                    <span>文章 · 前端工程</span>
-                  </div>
-                  <span className="text-[11px] text-text-muted">
-                    2024-01-0{item}
-                  </span>
-                </div>
-                <h3 className="mt-3 text-sm font-semibold tracking-tight text-text-primary md:text-base">
-                  从首页开始：为个人博客设计一套长寿命的信息架构
-                </h3>
-                <p className="mt-2 line-clamp-2 text-xs text-text-secondary md:text-sm">
-                  本文记录了搭建个人博客首页时的思考路径：如何在“最新内容”和“长期沉淀”之间找到平衡，以及怎样通过信息架构引导读者理解你在做的事。
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    架构设计
-                  </span>
-                  <span className="rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    个人知识库
-                  </span>
-                </div>
-              </article>
-            ))}
+            文章区域...
           </div>
         </section>
       </MainContent>
@@ -87,6 +58,7 @@ function HomePage() {
       <div className="space-y-4 md:space-y-5">
         <Sidebar />
       </div>
+
     </div>
   )
 }

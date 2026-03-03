@@ -41,12 +41,12 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
     font-family: var(--font-body);
+    color-scheme: dark;
   }
 
   body {
-    @apply min-h-screen bg-bg-page text-text-primary antialiased;
+    @apply min-h-screen bg-bg-page text-text-primary antialiased transition-colors duration-300 ease-out;
     margin: 0;
   }
 
@@ -57,4 +57,33 @@
   button {
     font-family: inherit;
   }
+}
+
+/* 亮色主题：通过 data-theme="light" 覆盖 CSS 变量 */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg-page: #f5f5f7;
+  --color-bg-elevated: #ffffff;
+  --color-bg-elevated-soft: #f9fafb;
+  --color-border-subtle: rgba(15, 23, 42, 0.12);
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #9ca3af;
+
+  --color-accent-primary: #f97316;
+  --color-accent-soft: rgba(249, 115, 22, 0.08);
+  --color-accent-underline-from: #f97316;
+  --color-accent-underline-to: #db2777;
+
+  --color-chip-bg: rgba(15, 23, 42, 0.03);
+  --color-chip-border: rgba(15, 23, 42, 0.12);
+
+  --color-divider-subtle: rgba(15, 23, 42, 0.08);
+
+  --color-danger: #e11d48;
+
+  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.12);
+  --shadow-subtle: 0 10px 30px rgba(15, 23, 42, 0.1);
 }

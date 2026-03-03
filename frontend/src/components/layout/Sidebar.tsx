@@ -1,6 +1,6 @@
 function Sidebar() {
   return (
-    <aside className="space-y-4 rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4 shadow-subtle md:space-y-5 md:p-5">
+    <aside className="space-y-4 rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4 shadow-subtle md:space-y-5 md:p-5 transition-colors duration-300 ease-out">
       <div>
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
           热门文章
@@ -10,19 +10,19 @@ function Sidebar() {
             type="button"
             className="block text-left text-text-secondary hover:text-text-primary"
           >
-            从 0 到 1 搭建个人数字花园
+            文章1
           </button>
           <button
             type="button"
             className="block text-left text-text-secondary hover:text-text-primary"
           >
-            写给前端工程师的长期主义
+            文章2
           </button>
           <button
             type="button"
             className="block text-left text-text-secondary hover:text-text-primary"
           >
-            用数据回顾一年创作路
+            文章3
           </button>
         </div>
       </div>

@@ -1,6 +1,13 @@
-function Header() {
+interface HeaderProps {
+  theme: 'light' | 'dark'
+  onToggleTheme: () => void
+}
+
+function Header({ theme, onToggleTheme }: HeaderProps) {
+  const isDark = theme === 'dark'
+
   return (
-    <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20">
+    <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20 transition-colors duration-300 ease-out">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-linear-to-br from-accent-primary to-accent-underline-to shadow-subtle" />
@@ -47,17 +54,10 @@ function Header() {
           <button
             type="button"
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
-            aria-label="切换主题"
+            aria-label={isDark ? '切换为浅色主题' : '切换为深色主题'}
+            onClick={onToggleTheme}
           >
-            ☾
-          </button>
-
-          <button
-            type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:hidden"
-            aria-label="打开导航菜单"
-          >
-            ☰
+            <span aria-hidden="true">{isDark ? '☀' : '☾'}</span>
           </button>
         </div>
       </div>
