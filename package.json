@@ -19,15 +19,20 @@
     "format:frontend": "cd frontend && pnpm format",
     "format": "npm run format:backend && npm run format:frontend",
     "check:all": "npm run lint && npm run type-check && npm run format",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && pnpm dev",
+    "dev": "node scripts/dev.js",
+    "dev:simple": "concurrently --kill-others-on-fail --names \"BACKEND,FRONTEND\" --prefix \"[{name}]\" --prefix-colors \"bgBlue.bold,bgMagenta.bold\" \"npm run dev:backend\" \"npm run dev:frontend\""
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,md}": [
-      "prettier --write"
+      "npx prettier --write"
     ],
     "backend/src/**/*.ts": [
       "cd backend && npm run lint:staged",
