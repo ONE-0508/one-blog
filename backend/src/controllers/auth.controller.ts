@@ -101,7 +101,7 @@ export class AuthController {
     try {
       // 从认证中间件获取用户ID
       const userId = (req as { user?: { id: string } }).user?.id;
-      
+
       if (!userId) {
         throw new BadRequestError('User ID not found in request');
       }
@@ -181,7 +181,11 @@ export class AuthController {
       }
 
       // 验证令牌
-      const payload = authService.verifyToken(token) as { sub: string; role?: string; exp?: number };
+      const payload = authService.verifyToken(token) as {
+        sub: string;
+        role?: string;
+        exp?: number;
+      };
 
       res.status(200).json({
         success: true,

@@ -16,13 +16,11 @@ const logFormat = winston.format.combine(
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({ format: 'HH:mm:ss' }),
-  winston.format.printf(
-    ({ timestamp, level, message, ...meta }) => {
-      return `${timestamp} [${level}]: ${message} ${
-        Object.keys(meta).length ? JSON.stringify(meta) : ''
-      }`;
-    }
-  )
+  winston.format.printf(({ timestamp, level, message, ...meta }) => {
+    return `${timestamp} [${level}]: ${message} ${
+      Object.keys(meta).length ? JSON.stringify(meta) : ''
+    }`;
+  })
 );
 
 // Create the logger

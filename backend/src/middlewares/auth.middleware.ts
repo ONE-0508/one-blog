@@ -30,7 +30,7 @@ export const authenticate = async (
   try {
     // 从Authorization头获取令牌
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedError('No token provided');
     }
@@ -99,19 +99,19 @@ export const optionalAuthenticate = async (
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
-      
+
       try {
         const payload = authService.verifyToken(token);
-        
+
         if (payload.type === 'access') {
           req.user = {
             id: payload.sub,
             role: payload.role as UserRole,
           };
-          
+
           logger.debug(`Optional authentication: User ${req.user.id} authenticated`);
         }
       } catch {
@@ -131,11 +131,7 @@ export const optionalAuthenticate = async (
 /**
  * 检查用户是否是自己或管理员
  */
-export const requireSelfOrAdmin = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
+export const requireSelfOrAdmin = (req: Request, _res: Response, next: NextFunction): void => {
   try {
     if (!req.user) {
       throw new UnauthorizedError('Authentication required');

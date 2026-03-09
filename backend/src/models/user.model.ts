@@ -183,7 +183,7 @@ export class User extends Model {
       [UserRole.EDITOR]: 2,
       [UserRole.ADMIN]: 3,
     };
-    
+
     return roleHierarchy[this.role] >= roleHierarchy[requiredRole];
   }
 

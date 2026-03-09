@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { User, UserRole, UserStatus } from '@/models/user.model';
-import { BadRequestError, UnauthorizedError, ForbiddenError, ConflictError } from '@/utils/AppError';
+import {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  ConflictError,
+} from '@/utils/AppError';
 import logger from '@/config/logger';
 
 /**
@@ -223,7 +228,7 @@ export class AuthService {
   async refreshAccessToken(refreshToken: string): Promise<Tokens> {
     // 验证刷新令牌
     const payload = this.verifyToken(refreshToken, true);
-    
+
     if (payload.type !== 'refresh') {
       throw new UnauthorizedError('Invalid token type');
     }
@@ -248,7 +253,7 @@ export class AuthService {
    */
   async getCurrentUser(userId: string): Promise<User> {
     const user = await User.findByPk(userId);
-    
+
     if (!user) {
       throw new UnauthorizedError('User not found');
     }
@@ -269,7 +274,7 @@ export class AuthService {
     newPassword: string
   ): Promise<void> {
     const user = await User.findByPk(userId);
-    
+
     if (!user) {
       throw new UnauthorizedError('User not found');
     }
@@ -293,7 +298,7 @@ export class AuthService {
   async logout(): Promise<{ message: string }> {
     // 在实际应用中，这里可以将令牌加入黑名单
     // 对于无状态JWT，客户端只需删除本地存储的令牌
-    
+
     return { message: 'Logged out successfully' };
   }
 }

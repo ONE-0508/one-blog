@@ -1,5 +1,5 @@
-import MainContent from '../components/layout/MainContent'
-import Sidebar from '../components/layout/Sidebar'
+import MainContent from '../components/layout/MainContent';
+import Sidebar from '../components/layout/Sidebar';
 
 function HomePage() {
   return (
@@ -38,30 +38,21 @@ function HomePage() {
 
         <section className="space-y-4">
           <div className="flex items-baseline justify-between gap-2">
-            <h2 className="text-sm font-semibold tracking-wide md:text-base">
-              最新文章
-            </h2>
-            <button
-              type="button"
-              className="text-xs text-text-muted hover:text-text-primary"
-            >
+            <h2 className="text-sm font-semibold tracking-wide md:text-base">最新文章</h2>
+            <button type="button" className="text-xs text-text-muted hover:text-text-primary">
               查看全部
             </button>
           </div>
 
-          <div className="space-y-3 md:space-y-4">
-            文章区域...
-          </div>
+          <div className="space-y-3 md:space-y-4">文章区域...</div>
         </section>
       </MainContent>
 
       <div className="space-y-4 md:space-y-5">
         <Sidebar />
       </div>
-
     </div>
-  )
+  );
 }
 
-export default HomePage
-
+export default HomePage;

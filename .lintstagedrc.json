@@ -1,0 +1,13 @@
+{
+  "*.{js,jsx,ts,tsx,json,md}": [
+    "prettier --write"
+  ],
+  "backend/src/**/*.ts": [
+    "cd backend && npm run lint:staged",
+    "cd backend && npm run type-check"
+  ],
+  "frontend/src/**/*.{ts,tsx}": [
+    "cd frontend && pnpm lint:staged",
+    "cd frontend && pnpm type-check"
+  ]
+}

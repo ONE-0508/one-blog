@@ -1,12 +1,12 @@
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 
 interface HeaderProps {
-  theme: 'light' | 'dark'
-  onToggleTheme: () => void
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
 }
 
 function Header({ theme, onToggleTheme }: HeaderProps) {
-  const isDark = theme === 'dark'
+  const isDark = theme === 'dark';
 
   return (
     <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20 transition-colors duration-300 ease-out">
@@ -14,12 +14,8 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-linear-to-br from-accent-primary to-accent-underline-to shadow-subtle" />
           <div className="flex flex-col leading-tight">
-            <span className="font-semibold tracking-wide">
-              ONE Blog
-            </span>
-            <span className="text-xs text-text-muted">
-              记录 · 思考 · 构建
-            </span>
+            <span className="font-semibold tracking-wide">ONE Blog</span>
+            <span className="text-xs text-text-muted">记录 · 思考 · 构建</span>
           </div>
         </Link>
 
@@ -70,8 +66,7 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
-export default Header
-
+export default Header;

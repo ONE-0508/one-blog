@@ -6,15 +6,9 @@ import logger from '@/config/logger';
  * Validate required environment variables
  */
 const validateEnv = (): void => {
-  const requiredEnvVars = [
-    'NODE_ENV',
-    'PORT',
-    'JWT_SECRET',
-  ];
+  const requiredEnvVars = ['NODE_ENV', 'PORT', 'JWT_SECRET'];
 
-  const missingEnvVars = requiredEnvVars.filter(
-    (envVar) => !process.env[envVar]
-  );
+  const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
   if (missingEnvVars.length > 0) {
     logger.error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
@@ -22,7 +16,10 @@ const validateEnv = (): void => {
   }
 
   // Validate JWT secret in production
-  if (process.env.NODE_ENV === 'production' && process.env.JWT_SECRET === 'your-super-secret-jwt-key-change-in-production') {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    process.env.JWT_SECRET === 'your-super-secret-jwt-key-change-in-production'
+  ) {
     logger.error('JWT_SECRET must be changed in production environment');
     process.exit(1);
   }

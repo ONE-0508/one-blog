@@ -70,7 +70,7 @@ const getDatabaseConfig = (): DatabaseConfig => {
  */
 const createSequelizeInstance = (): Sequelize => {
   const config = getDatabaseConfig();
-  
+
   const sequelize = new Sequelize({
     host: config.host,
     port: config.port,

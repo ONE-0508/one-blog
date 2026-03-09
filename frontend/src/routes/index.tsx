@@ -1,10 +1,10 @@
-import { RouterProvider, createBrowserRouter } from 'react-router'
+import { RouterProvider, createBrowserRouter } from 'react-router';
 
-import AppRouteLayout from '../layouts/AppRouteLayout'
-import HomePage from '../pages/HomePage'
-import LoginPage from '../pages/LoginPage'
-import RegisterPage from '../pages/RegisterPage'
-import NotFoundPage from '../pages/NotFoundPage'
+import AppRouteLayout from '../layouts/AppRouteLayout';
+import HomePage from '../pages/HomePage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const router = createBrowserRouter([
   {
@@ -17,11 +17,10 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
-])
+]);
 
 function AppRouter() {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }
 
-export default AppRouter
-
+export default AppRouter;

@@ -1,4 +1,4 @@
-import express  from 'express';
+import express from 'express';
 import type { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -26,15 +26,17 @@ class App {
   private initializeMiddlewares(): void {
     // Security middleware
     this.app.use(helmet());
-    
+
     // CORS configuration
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
     this.app.use(
       cors({
         origin: (origin, callback) => {
           // Allow requests with no origin (like mobile apps or curl requests)
-          if (!origin) { return callback(null, true); }
-          
+          if (!origin) {
+            return callback(null, true);
+          }
+
           if (allowedOrigins.indexOf(origin) === -1) {
             const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
             logger.warn(msg);
@@ -121,7 +123,7 @@ class App {
   private initializeErrorHandling(): void {
     // 404 handler
     this.app.use(notFoundHandler);
-    
+
     // Global error handler
     this.app.use(errorHandler);
   }

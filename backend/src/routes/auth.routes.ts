@@ -12,11 +12,7 @@ const router = Router();
  * @access  Public
  * @rate    限制：15分钟内最多5次注册尝试
  */
-router.post(
-  '/register',
-  authLimiter,
-  authController.register.bind(authController)
-);
+router.post('/register', authLimiter, authController.register.bind(authController));
 
 /**
  * @route   POST /api/v1/auth/login
@@ -24,84 +20,57 @@ router.post(
  * @access  Public
  * @rate    限制：15分钟内最多5次登录尝试
  */
-router.post(
-  '/login',
-  authLimiter,
-  authController.login.bind(authController)
-);
+router.post('/login', authLimiter, authController.login.bind(authController));
 
 /**
  * @route   POST /api/v1/auth/refresh
  * @desc    刷新访问令牌
  * @access  Public（需要有效的刷新令牌）
  */
-router.post(
-  '/refresh',
-  authController.refreshToken.bind(authController)
-);
+router.post('/refresh', authController.refreshToken.bind(authController));
 
 /**
  * @route   POST /api/v1/auth/logout
  * @desc    用户登出
  * @access  Private（需要有效的访问令牌）
  */
-router.post(
-  '/logout',
-  authenticate,
-  authController.logout.bind(authController)
-);
+router.post('/logout', authenticate, authController.logout.bind(authController));
 
 /**
  * @route   GET /api/v1/auth/me
  * @desc    获取当前用户信息
  * @access  Private（需要有效的访问令牌）
  */
-router.get(
-  '/me',
-  authenticate,
-  authController.getCurrentUser.bind(authController)
-);
+router.get('/me', authenticate, authController.getCurrentUser.bind(authController));
 
 /**
  * @route   PUT /api/v1/auth/password
  * @desc    修改密码
  * @access  Private（需要有效的访问令牌）
  */
-router.put(
-  '/password',
-  authenticate,
-  authController.changePassword.bind(authController)
-);
+router.put('/password', authenticate, authController.changePassword.bind(authController));
 
 /**
  * @route   POST /api/v1/auth/validate
  * @desc    验证令牌有效性
  * @access  Public
  */
-router.post(
-  '/validate',
-  authController.validateToken.bind(authController)
-);
+router.post('/validate', authController.validateToken.bind(authController));
 
 /**
  * @route   GET /api/v1/auth/admin/users
  * @desc    获取所有用户（管理员）
  * @access  Private（需要管理员权限）
  */
-router.get(
-  '/admin/users',
-  authenticate,
-  requireRole(UserRole.ADMIN),
-  (_req, res) => {
-    // 这里可以调用用户控制器
-    res.status(200).json({
-      success: true,
-      data: {
-        message: 'Admin endpoint - get all users',
-      },
-    });
-  }
-);
+router.get('/admin/users', authenticate, requireRole(UserRole.ADMIN), (_req, res) => {
+  // 这里可以调用用户控制器
+  res.status(200).json({
+    success: true,
+    data: {
+      message: 'Admin endpoint - get all users',
+    },
+  });
+});
 
 /**
  * @route   GET /api/v1/auth/test/public
@@ -139,21 +108,16 @@ router.get('/test/protected', authenticate, (req, res) => {
  * @desc    管理员测试端点
  * @access  Private（需要管理员权限）
  */
-router.get(
-  '/test/admin',
-  authenticate,
-  requireRole(UserRole.ADMIN),
-  (req, res) => {
-    res.status(200).json({
-      success: true,
-      data: {
-        message: 'This is an admin-only endpoint',
-        user: req.user,
-        timestamp: new Date().toISOString(),
-      },
-    });
-  }
-);
+router.get('/test/admin', authenticate, requireRole(UserRole.ADMIN), (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      message: 'This is an admin-only endpoint',
+      user: req.user,
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
 
 /**
  * @route   GET /api/v1/auth/test/optional
