@@ -1,11 +1,58 @@
 export interface LoginRequest {
-  username: string
+  username?: string
+  email?: string
   password: string
 }
 
-export interface LoginResponse {
+export interface RegisterRequest {
+  username: string
+  email: string
+  password: string
+  displayName?: string
+}
+
+export interface AuthTokens {
   accessToken: string
-  tokenType?: string
-  expiresIn?: number
+  refreshToken: string
+  expiresIn: number
+}
+
+export interface UserProfile {
+  id: string
+  username: string
+  email: string
+  displayName?: string
+  avatarUrl?: string
+  bio?: string
+  role: string
+  createdAt: string
+  updatedAt?: string
+}
+
+export interface LoginResponse {
+  success: boolean
+  data: {
+    user: UserProfile
+    tokens: AuthTokens
+  }
+}
+
+export interface RegisterResponse {
+  success: boolean
+  data: {
+    user: UserProfile
+    tokens: AuthTokens
+  }
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean
+  data: T
+  error?: {
+    message: string
+    code: number
+    details?: any
+    timestamp: string
+  }
 }
 

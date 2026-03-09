@@ -5,7 +5,7 @@ import logger from '@/config/logger';
 /**
  * Validate required environment variables
  */
-const validateEnv = () => {
+const validateEnv = (): void => {
   const requiredEnvVars = [
     'NODE_ENV',
     'PORT',
@@ -31,7 +31,7 @@ const validateEnv = () => {
 /**
  * Handle uncaught exceptions and unhandled rejections
  */
-const setupErrorHandlers = () => {
+const setupErrorHandlers = (): void => {
   // Handle uncaught exceptions
   process.on('uncaughtException', (error: Error) => {
     logger.error('Uncaught Exception:', error);
@@ -68,7 +68,7 @@ const setupErrorHandlers = () => {
 /**
  * Main application entry point
  */
-const main = () => {
+const main = (): void => {
   try {
     // Validate environment variables
     validateEnv();

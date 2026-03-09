@@ -2,12 +2,13 @@ import { useId, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 
 import { login } from '../api/auth'
-import { getAccessToken, setAccessToken } from '../api/authStorage'
+import { getAccessToken } from '../api/authStorage'
 import { toApiError } from '../api/errors'
 import type { LoginRequest } from '../types/auth'
 
 const initialForm: LoginRequest = {
   username: '',
+  email: '',
   password: '',
 }
 
@@ -24,23 +25,30 @@ function LoginPage() {
   const [form, setForm] = useState<LoginRequest>(initialForm)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loginType, setLoginType] = useState<'username' | 'email'>('username')
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
 
-    if (!form.username.trim() || !form.password) {
-      setError('请输入用户名与密码')
+    if ((!form.username && !form.email) || !form.password) {
+      setError('请输入用户名/邮箱和密码')
       return
     }
 
     setIsSubmitting(true)
     try {
-      const data = await login({
-        username: form.username.trim(),
+      const loginData: LoginRequest = {
         password: form.password,
-      })
-      setAccessToken(data.accessToken)
+      }
+      
+      if (loginType === 'username' && form.username) {
+        loginData.username = form.username.trim()
+      } else if (loginType === 'email' && form.email) {
+        loginData.email = form.email.trim()
+      }
+      
+      await login(loginData)
       navigate('/', { replace: true })
     } catch (err) {
       setError(toApiError(err).message)
@@ -65,23 +73,57 @@ function LoginPage() {
         </div>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          {/* 登录类型切换 */}
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                loginType === 'username'
+                  ? 'bg-accent-primary text-black'
+                  : 'bg-bg-elevated-soft text-text-secondary hover:bg-bg-elevated'
+              }`}
+              onClick={() => setLoginType('username')}
+              disabled={isSubmitting}
+            >
+              用户名登录
+            </button>
+            <button
+              type="button"
+              className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                loginType === 'email'
+                  ? 'bg-accent-primary text-black'
+                  : 'bg-bg-elevated-soft text-text-secondary hover:bg-bg-elevated'
+              }`}
+              onClick={() => setLoginType('email')}
+              disabled={isSubmitting}
+            >
+              邮箱登录
+            </button>
+          </div>
+
+          {/* 用户名/邮箱输入框 */}
           <div className="space-y-2">
             <label
               htmlFor={usernameId}
               className="text-xs font-medium text-text-secondary"
             >
-              用户名
+              {loginType === 'username' ? '用户名' : '邮箱'}
             </label>
             <input
               id={usernameId}
-              name="username"
-              autoComplete="username"
+              name={loginType === 'username' ? 'username' : 'email'}
+              type={loginType === 'email' ? 'email' : 'text'}
+              autoComplete={loginType === 'username' ? 'username' : 'email'}
               className="w-full rounded-[var(--radius-md)] border border-border-subtle bg-bg-elevated-soft px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary/60 focus:outline-none focus:ring-2 focus:ring-accent-primary/20"
-              placeholder="请输入用户名"
-              value={form.username}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, username: e.target.value }))
-              }
+              placeholder={loginType === 'username' ? '请输入用户名' : '请输入邮箱'}
+              value={loginType === 'username' ? form.username : form.email || ''}
+              onChange={(e) => {
+                if (loginType === 'username') {
+                  setForm((prev) => ({ ...prev, username: e.target.value, email: '' }))
+                } else {
+                  setForm((prev) => ({ ...prev, email: e.target.value, username: '' }))
+                }
+              }}
               disabled={isSubmitting}
             />
           </div>

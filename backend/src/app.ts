@@ -7,6 +7,8 @@ import morgan from 'morgan';
 import { apiLimiter } from '@/middlewares/rateLimiter';
 import { errorHandler, notFoundHandler } from '@/middlewares/errorHandler';
 import logger from '@/config/logger';
+import { testDatabaseConnection, syncDatabase } from '@/config/database';
+import authRoutes from '@/routes/auth.routes';
 
 class App {
   public app: Application;
@@ -89,8 +91,8 @@ class App {
       next();
     });
 
-    // TODO: Add actual API routes here
-    // this.app.use('/api/v1/auth', authRoutes);
+    // API routes
+    this.app.use('/api/v1/auth', authRoutes);
     // this.app.use('/api/v1/articles', articleRoutes);
     // this.app.use('/api/v1/notes', noteRoutes);
     // this.app.use('/api/v1/comments', commentRoutes);
@@ -127,11 +129,29 @@ class App {
   /**
    * Start the server
    */
-  public start(port: number): void {
+  public async start(port: number): Promise<void> {
+    // 测试数据库连接
+    const isDbConnected = await testDatabaseConnection();
+    if (!isDbConnected) {
+      logger.error('Failed to connect to database. Server will not start.');
+      process.exit(1);
+    }
+
+    // 开发环境同步数据库
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        await syncDatabase(false); // 不强制同步，保留现有数据
+        logger.info('Database synchronized for development');
+      } catch (error) {
+        logger.warn('Database synchronization failed, continuing anyway:', error);
+      }
+    }
+
     this.app.listen(port, () => {
       logger.info(`Server is running on port ${port}`);
       logger.info(`Environment: ${process.env.NODE_ENV}`);
       logger.info(`Health check: http://localhost:${port}/health`);
+      logger.info(`Auth endpoints: http://localhost:${port}/api/v1/auth`);
     });
   }
 }

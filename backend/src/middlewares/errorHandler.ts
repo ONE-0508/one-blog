@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { AppError } from '@/utils/AppError';
 import logger from '@/config/logger';
 
@@ -10,7 +10,7 @@ export const errorHandler = (
   req: Request,
   res: Response,
   _next: NextFunction
-) => {
+): void => {
   // Log error
   logger.error({
     message: err.message,
@@ -23,7 +23,7 @@ export const errorHandler = (
 
   // Handle AppError instances
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
+    res.status(err.statusCode).json({
       success: false,
       error: {
         message: err.message,
@@ -32,11 +32,12 @@ export const errorHandler = (
         timestamp: new Date().toISOString(),
       },
     });
+    return;
   }
 
   // Handle JWT errors
   if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       error: {
         message: 'Invalid token',
@@ -44,10 +45,11 @@ export const errorHandler = (
         timestamp: new Date().toISOString(),
       },
     });
+    return;
   }
 
   if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       error: {
         message: 'Token expired',
@@ -55,19 +57,21 @@ export const errorHandler = (
         timestamp: new Date().toISOString(),
       },
     });
+    return;
   }
 
   // Handle validation errors
   if (err.name === 'ValidationError') {
-    return res.status(422).json({
+    res.status(422).json({
       success: false,
       error: {
         message: 'Validation failed',
         code: 422,
-        details: (err as any).details,
+        details: (err as { details?: unknown }).details,
         timestamp: new Date().toISOString(),
       },
     });
+    return;
   }
 
   // Handle unknown errors (mask in production)
@@ -75,7 +79,7 @@ export const errorHandler = (
   const message = isProduction ? 'Internal server error' : err.message;
   const stack = isProduction ? undefined : err.stack;
 
-  return res.status(500).json({
+  res.status(500).json({
     success: false,
     error: {
       message,
@@ -89,7 +93,7 @@ export const errorHandler = (
 /**
  * 404 Not Found middleware
  */
-export const notFoundHandler = (req: Request, res: Response) => {
+export const notFoundHandler = (req: Request, res: Response): void => {
   res.status(404).json({
     success: false,
     error: {

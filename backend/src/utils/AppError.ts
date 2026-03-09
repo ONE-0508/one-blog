@@ -4,13 +4,13 @@
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;
-  public readonly details?: any;
+  public readonly details?: unknown;
 
   constructor(
     message: string,
     statusCode: number = 500,
     isOperational: boolean = true,
-    details?: any
+    details?: unknown
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -29,7 +29,7 @@ export class AppError extends Error {
  * Bad Request Error (400)
  */
 export class BadRequestError extends AppError {
-  constructor(message: string = 'Bad Request', details?: any) {
+  constructor(message: string = 'Bad Request', details?: unknown) {
     super(message, 400, true, details);
   }
 }
@@ -74,7 +74,7 @@ export class ConflictError extends AppError {
  * Validation Error (422)
  */
 export class ValidationError extends AppError {
-  constructor(message: string = 'Validation failed', details?: any) {
+  constructor(message: string = 'Validation failed', details?: unknown) {
     super(message, 422, true, details);
   }
 }
