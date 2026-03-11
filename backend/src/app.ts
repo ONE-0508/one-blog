@@ -132,20 +132,35 @@ class App {
    * Start the server
    */
   public async start(port: number): Promise<void> {
-    // 测试数据库连接
-    const isDbConnected = await testDatabaseConnection();
-    if (!isDbConnected) {
-      logger.error('Failed to connect to database. Server will not start.');
-      process.exit(1);
-    }
-
-    // 开发环境同步数据库
+    // 在开发环境中，如果数据库连接失败，仍然启动服务器（用于开发和测试）
     if (process.env.NODE_ENV === 'development') {
       try {
-        await syncDatabase(false); // 不强制同步，保留现有数据
-        logger.info('Database synchronized for development');
+        const isDbConnected = await testDatabaseConnection();
+        if (!isDbConnected) {
+          logger.warn(
+            'Database connection failed in development mode, but server will start anyway for testing.'
+          );
+        } else {
+          // 开发环境同步数据库
+          try {
+            await syncDatabase(false); // 不强制同步，保留现有数据
+            logger.info('Database synchronized for development');
+          } catch (error) {
+            logger.warn('Database synchronization failed, continuing anyway:', error);
+          }
+        }
       } catch (error) {
-        logger.warn('Database synchronization failed, continuing anyway:', error);
+        logger.warn(
+          'Database connection test failed in development mode, but server will start anyway:',
+          error
+        );
+      }
+    } else {
+      // 生产环境必须连接数据库
+      const isDbConnected = await testDatabaseConnection();
+      if (!isDbConnected) {
+        logger.error('Failed to connect to database. Server will not start.');
+        process.exit(1);
       }
     }
 

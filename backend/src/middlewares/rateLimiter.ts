@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit';
+import { rateLimit, ipKeyGenerator } from 'express-rate-limit';
 import type { Request } from 'express';
 import logger from '@/config/logger';
 
@@ -19,7 +19,7 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   keyGenerator: (req: Request) => {
     // Use IP address as key, but consider adding user ID for authenticated requests
-    return req.ip || 'unknown';
+    return ipKeyGenerator(req.ip || 'unknown');
   },
   handler: (req, res, _next, options) => {
     logger.warn(`Rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);

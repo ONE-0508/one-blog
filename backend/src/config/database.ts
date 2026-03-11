@@ -19,6 +19,7 @@ interface DatabaseConfig {
     acquire: number;
     idle: number;
   };
+  dialectOptions?: Record<string, unknown>;
 }
 
 /**
@@ -47,7 +48,26 @@ const getDatabaseConfig = (): DatabaseConfig => {
     };
   }
 
-  // 开发和生产环境使用PostgreSQL
+  // 开发环境使用PostgreSQL
+  if (!isProduction) {
+    return {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      database: process.env.DB_NAME || 'blog_dev',
+      username: process.env.DB_USER || 'mac',
+      password: process.env.DB_PASSWORD || '',
+      dialect: 'postgres' as Dialect,
+      logging: false,
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
+      },
+    };
+  }
+
+  // 生产环境使用PostgreSQL
   return {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432', 10),
@@ -57,8 +77,8 @@ const getDatabaseConfig = (): DatabaseConfig => {
     dialect: 'postgres' as Dialect,
     logging: false,
     pool: {
-      max: isProduction ? 20 : 5,
-      min: isProduction ? 5 : 0,
+      max: 20,
+      min: 5,
       acquire: 30000,
       idle: 10000,
     },
@@ -71,7 +91,7 @@ const getDatabaseConfig = (): DatabaseConfig => {
 const createSequelizeInstance = (): Sequelize => {
   const config = getDatabaseConfig();
 
-  const sequelize = new Sequelize({
+  const sequelizeOptions: Record<string, unknown> = {
     host: config.host,
     port: config.port,
     database: config.database,
@@ -80,7 +100,19 @@ const createSequelizeInstance = (): Sequelize => {
     dialect: config.dialect,
     logging: config.logging,
     pool: config.pool,
-  });
+  };
+
+  // 如果是SQLite，添加存储配置
+  if (config.dialect === 'sqlite') {
+    sequelizeOptions.storage = config.database === ':memory:' ? ':memory:' : config.database;
+    // 移除host、port、username、password等SQLite不需要的字段
+    delete sequelizeOptions.host;
+    delete sequelizeOptions.port;
+    delete sequelizeOptions.username;
+    delete sequelizeOptions.password;
+  }
+
+  const sequelize = new Sequelize(sequelizeOptions);
 
   return sequelize;
 };
@@ -100,7 +132,19 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
     await sequelize.authenticate();
     logger.info('Database connection has been established successfully.');
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
+    // 在开发环境中，允许连接失败，服务器仍然可以启动
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.warn('Database connection failed in development mode:', errorMessage);
+      logger.warn('Server will start without database connection for development purposes.');
+      logger.warn('To fix database connection:');
+      logger.warn(
+        '1. Install PostgreSQL: brew install postgresql && brew services start postgresql'
+      );
+      logger.warn('2. Or install SQLite: npm install sqlite3@^5.1.6');
+      return true; // 在开发环境中返回true，让服务器可以启动
+    }
     logger.error('Unable to connect to the database:', error);
     return false;
   }

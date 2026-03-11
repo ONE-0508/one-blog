@@ -48,6 +48,8 @@ backend/
 
 - Node.js 18+
 - npm 9+ 或 pnpm 8+
+- PostgreSQL 15+（开发环境）
+- SQLite 3+（测试环境）
 
 ### 安装依赖
 
@@ -55,6 +57,23 @@ backend/
 cd backend
 npm install
 ```
+
+### 数据库安装（开发环境）
+
+#### macOS (使用Homebrew)
+
+```bash
+# 安装PostgreSQL
+brew install postgresql@15
+brew services start postgresql@15
+
+# 创建数据库
+/opt/homebrew/opt/postgresql@15/bin/createdb blog_dev
+```
+
+#### 其他平台
+
+参考 [DATABASE.md](docs/DATABASE.md) 中的安装指南。
 
 ### 环境配置
 
@@ -65,6 +84,16 @@ cp .env.example .env
 ```
 
 编辑 `.env` 文件，配置必要的环境变量。
+
+**重要**：确保数据库配置正确：
+
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=blog_dev
+DB_USER=你的系统用户名（如：mac）
+DB_PASSWORD=
+```
 
 ### 开发模式
 
@@ -78,6 +107,29 @@ npm run lint
 # 类型检查
 npm run type-check
 ```
+
+### 数据库管理
+
+项目提供了数据库管理脚本：
+
+```bash
+# 检查数据库状态
+node scripts/db-manage.js status
+
+# 列出所有表
+node scripts/db-manage.js tables
+
+# 查看用户数据
+node scripts/db-manage.js users
+
+# 添加测试数据
+node scripts/db-manage.js seed
+
+# 查看帮助
+node scripts/db-manage.js help
+```
+
+详细数据库配置请参考 [DATABASE.md](docs/DATABASE.md)。
 
 ### 生产模式
 
@@ -119,6 +171,7 @@ npm run test:coverage
 ### 响应格式
 
 **成功响应**:
+
 ```json
 {
   "success": true,
@@ -132,6 +185,7 @@ npm run test:coverage
 ```
 
 **错误响应**:
+
 ```json
 {
   "success": false,
@@ -268,22 +322,26 @@ CREATE TABLE projects (
 ## 安全措施
 
 ### 1. 身份验证
+
 - JWT令牌认证
 - 密码哈希（bcrypt）
 - 令牌刷新机制
 
 ### 2. 输入验证
+
 - 请求体验证
 - 参数验证
 - 文件类型和大小限制
 
 ### 3. 安全中间件
+
 - Helmet（安全HTTP头）
 - CORS配置
 - 速率限制
 - SQL注入防护
 
 ### 4. 错误处理
+
 - 统一错误响应
 - 生产环境错误屏蔽
 - 详细的错误日志
@@ -333,6 +391,7 @@ pm2 monit
 ## 监控与日志
 
 ### 日志级别
+
 - `error`: 错误日志
 - `warn`: 警告日志
 - `info`: 信息日志
@@ -340,6 +399,7 @@ pm2 monit
 - `debug`: 调试日志
 
 ### 日志文件
+
 - `logs/error-YYYY-MM-DD.log`: 错误日志
 - `logs/combined-YYYY-MM-DD.log`: 所有日志
 
