@@ -145,6 +145,14 @@ class App {
           try {
             await syncDatabase(false); // 不强制同步，保留现有数据
             logger.info('Database synchronized for development');
+
+            // 初始化默认用户
+            try {
+              const { authService } = await import('@/services/auth.service');
+              await authService.initializeDefaultUser();
+            } catch (error) {
+              logger.warn('Failed to initialize default user:', error);
+            }
           } catch (error) {
             logger.warn('Database synchronization failed, continuing anyway:', error);
           }

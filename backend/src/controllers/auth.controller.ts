@@ -18,9 +18,23 @@ export class AuthController {
         throw new BadRequestError('Username, email and password are required');
       }
 
-      // 密码强度验证
+      // 用户名格式验证
+      if (username.length > 10) {
+        throw new BadRequestError('Username must be 10 characters or less');
+      }
+      if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        throw new BadRequestError('Username can only contain letters and numbers');
+      }
+
+      // 密码格式验证
       if (password.length < 8) {
         throw new BadRequestError('Password must be at least 8 characters long');
+      }
+      if (password.length > 16) {
+        throw new BadRequestError('Password must be 16 characters or less');
+      }
+      if (!/^[a-zA-Z0-9]+$/.test(password)) {
+        throw new BadRequestError('Password can only contain letters and numbers');
       }
 
       const { user, tokens } = await authService.register({
@@ -52,6 +66,24 @@ export class AuthController {
       // 基本验证
       if (!password || (!email && !username)) {
         throw new BadRequestError('Email/username and password are required');
+      }
+
+      // 用户名格式验证（如果使用用户名登录）
+      if (username) {
+        if (username.length > 10) {
+          throw new BadRequestError('Username must be 10 characters or less');
+        }
+        if (!/^[a-zA-Z0-9]+$/.test(username)) {
+          throw new BadRequestError('Username can only contain letters and numbers');
+        }
+      }
+
+      // 密码格式验证
+      if (password.length > 16) {
+        throw new BadRequestError('Password must be 16 characters or less');
+      }
+      if (!/^[a-zA-Z0-9]+$/.test(password)) {
+        throw new BadRequestError('Password can only contain letters and numbers');
       }
 
       const { user, tokens } = await authService.login({

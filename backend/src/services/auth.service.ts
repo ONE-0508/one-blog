@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import { User, UserRole, UserStatus } from '@/models/user.model';
 import {
   BadRequestError,
@@ -91,6 +92,49 @@ export class AuthService {
         expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
       } as jwt.SignOptions
     );
+  }
+
+  /**
+   * 初始化默认用户（如果不存在）
+   */
+  async initializeDefaultUser(): Promise<void> {
+    try {
+      const defaultUsername = 'admin';
+      const defaultEmail = 'admin@example.com';
+      const defaultPassword = 'admin123';
+
+      // 检查默认用户是否已存在
+      const existingUser = await User.findOne({
+        where: {
+          [Op.or]: [{ username: defaultUsername }, { email: defaultEmail }],
+        },
+      });
+
+      if (!existingUser) {
+        // 使用User.create方法，它会自动哈希密码
+        const user = await User.create({
+          username: defaultUsername,
+          email: defaultEmail,
+          passwordHash: defaultPassword, // User模型的@BeforeCreate钩子会自动哈希
+          displayName: 'Administrator',
+          role: UserRole.ADMIN,
+        });
+
+        logger.info('Default admin user created successfully', {
+          userId: user.id,
+          username: user.username,
+          role: user.role,
+        });
+      } else {
+        logger.info('Default admin user already exists', {
+          userId: existingUser.id,
+          username: existingUser.username,
+          role: existingUser.role,
+        });
+      }
+    } catch (error) {
+      logger.error('Failed to initialize default user:', error);
+    }
   }
 
   /**
