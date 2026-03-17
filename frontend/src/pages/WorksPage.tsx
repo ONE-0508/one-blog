@@ -3,11 +3,9 @@ function WorksPage() {
     <section className="space-y-4 rounded-[1.75rem] border border-border-subtle bg-bg-elevated/80 p-6 shadow-soft md:p-8">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">WORKS</p>
       <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">作品与项目</h1>
-      <p className="max-w-2xl text-sm text-text-secondary md:text-base">
-        展示可交付项目、实验性作品和长期维护的产品原型。稍后会同步作品卡片与案例。
-      </p>
+      <p className="max-w-2xl text-sm text-text-secondary md:text-base">该功能暂未开放。</p>
       <div className="rounded-xl border border-divider-subtle bg-bg-elevated-soft px-4 py-3 text-sm text-text-muted">
-        ✨ 作品集即将上线，敬请期待
+        暂未开放
       </div>
     </section>
   );

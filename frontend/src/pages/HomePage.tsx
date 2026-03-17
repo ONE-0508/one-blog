@@ -83,20 +83,21 @@ function HomePage() {
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            {[
-              { label: '文章总览', value: total ? `${total} 篇` : '持续更新' },
-              { label: '专题计划', value: '4 个专题' },
-              { label: '正在进行', value: '2 个项目' },
-            ].map(item => (
-              <div
-                key={item.label}
-                className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4"
-              >
-                <p className="text-xs uppercase tracking-[0.22em] text-text-muted">{item.label}</p>
-                <p className="mt-2 text-lg font-semibold text-text-primary">{item.value}</p>
-                <p className="mt-1 text-xs text-text-secondary">本周同步更新</p>
-              </div>
-            ))}
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">文章总览</p>
+              <p className="mt-2 text-lg font-semibold text-text-primary">
+                {total ? `${total} 篇` : '暂无数据'}
+              </p>
+              <p className="mt-1 text-xs text-text-secondary">本周同步更新</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">专题计划</p>
+              <p className="mt-2 text-sm text-text-muted">暂未开放</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">正在进行</p>
+              <p className="mt-2 text-sm text-text-muted">暂未开放</p>
+            </div>
           </div>
         </section>
 
@@ -105,27 +106,10 @@ function HomePage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold tracking-wide md:text-base">正在进行</h2>
-            <span className="text-xs text-text-muted">Focus Sprint</span>
+            <span className="text-xs text-text-muted">本期重点</span>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {[
-              {
-                title: '设计系统重塑计划',
-                desc: '统一前端 UI 语言与交互节奏，逐页清理视觉噪音。',
-              },
-              {
-                title: '内容中台升级',
-                desc: '完善文章、项目、笔记之间的关联与索引体验。',
-              },
-            ].map(item => (
-              <div
-                key={item.title}
-                className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/70 p-4"
-              >
-                <p className="text-sm font-semibold text-text-primary">{item.title}</p>
-                <p className="mt-2 text-xs text-text-secondary">{item.desc}</p>
-              </div>
-            ))}
+          <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/70 p-4 text-sm text-text-muted">
+            暂未开放
           </div>
         </section>
 

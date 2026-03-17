@@ -1,21 +1,7 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
 import { useAuth } from '../../contexts/useAuth';
 
 function Sidebar() {
-  const { user, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = () => {
-    setIsLoggingOut(true);
-    logout()
-      .catch((error: Error) => {
-        console.error('Logout failed:', error);
-      })
-      .finally(() => {
-        setIsLoggingOut(false);
-      });
-  };
+  const { user } = useAuth();
 
   return (
     <aside className="space-y-4 rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4 shadow-subtle md:space-y-5 md:p-5 transition-colors duration-300 ease-out">
@@ -44,35 +30,6 @@ function Sidebar() {
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="mt-3 w-full rounded-lg border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-accent-primary/60 hover:text-text-primary disabled:opacity-50"
-              >
-                {isLoggingOut ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="mr-1.5 h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    登出中...
-                  </span>
-                ) : (
-                  '退出登录'
-                )}
-              </button>
             </div>
           </div>
         </div>
@@ -82,10 +39,8 @@ function Sidebar() {
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
           热门文章
         </h2>
-        <div className="mt-3 space-y-2.5 text-sm">
-          <span className="block text-left text-text-secondary">文章1</span>
-          <span className="block text-left text-text-secondary">文章2</span>
-          <span className="block text-left text-text-secondary">文章3</span>
+        <div className="mt-3 rounded-xl border border-divider-subtle bg-bg-elevated-soft px-3 py-2 text-xs text-text-muted">
+          暂未开放
         </div>
       </div>
 
@@ -95,25 +50,8 @@ function Sidebar() {
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
           快速入口
         </h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Link
-            to="/#latest-posts"
-            className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
-          >
-            最新文章
-          </Link>
-          <Link
-            to="/notes"
-            className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
-          >
-            笔记时间线
-          </Link>
-          <Link
-            to="/works"
-            className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
-          >
-            作品精选
-          </Link>
+        <div className="mt-3 rounded-xl border border-divider-subtle bg-bg-elevated-soft px-3 py-2 text-xs text-text-muted">
+          暂未开放
         </div>
       </div>
     </aside>

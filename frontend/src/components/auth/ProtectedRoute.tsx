@@ -24,10 +24,10 @@ export function ProtectedRoute({
   // 如果正在加载，显示加载状态
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center bg-bg-page">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载中...</p>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-accent-primary"></div>
+          <p className="mt-4 text-sm text-text-secondary">加载中...</p>
         </div>
       </div>
     );

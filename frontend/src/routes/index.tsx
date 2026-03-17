@@ -15,8 +15,28 @@ import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
+    path: '/login',
+    element: (
+      <ProtectedRoute requireAuth={false}>
+        <LoginPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/register',
+    element: (
+      <ProtectedRoute requireAuth={false}>
+        <RegisterPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/',
-    element: <AppRouteLayout />,
+    element: (
+      <ProtectedRoute>
+        <AppRouteLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -45,22 +65,6 @@ const router = createBrowserRouter([
       {
         path: 'guestbook',
         element: <GuestbookPage />,
-      },
-      {
-        path: 'login',
-        element: (
-          <ProtectedRoute requireAuth={false}>
-            <LoginPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'register',
-        element: (
-          <ProtectedRoute requireAuth={false}>
-            <RegisterPage />
-          </ProtectedRoute>
-        ),
       },
       { path: '*', element: <NotFoundPage /> },
     ],
