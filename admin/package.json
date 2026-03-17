@@ -7,7 +7,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "build":"vite build",
-    "eslint": "eslint src/ --ext .ts,.tsx,.js,.jsx --fix --cache",
+    "eslint": "eslint src --fix --cache",
     "stylelint": "stylelint 'src/**/*.less' 'src/**/*.css' --fix --cache",
     "pre-commit": "pretty-quick --staged && npm run eslint && npm run stylelint",
     "prepare": "husky install && husky add .husky/pre-commit 'npm run pre-commit'"
@@ -77,10 +77,10 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "pnpm --dir admin eslint --fix --cache"
+      "pnpm eslint --fix --cache"
     ],
     "*.{css, less}": [
-      "pnpm --dir admin stylelint --fix"
+      "pnpm stylelint --fix"
     ]
   }
 }
