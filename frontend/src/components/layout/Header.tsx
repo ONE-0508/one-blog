@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router';
-import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { useAuth } from '../../contexts/useAuth';
@@ -11,11 +11,22 @@ interface HeaderProps {
   onToggleTheme: () => void;
 }
 
+const navItems = [
+  { to: '/', label: '首页' },
+  { to: '/notes', label: '笔记' },
+  { to: '/works', label: '作品' },
+  { to: '/archive', label: '归档' },
+  { to: '/about', label: '关于' },
+  { to: '/guestbook', label: '留言板' },
+];
+
 function Header({ theme, onToggleTheme }: HeaderProps) {
   const isDark = theme === 'dark';
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const activePath = useMemo(() => location.pathname, [location.pathname]);
 
   const handleLogout = () => {
     logout()
@@ -38,25 +49,21 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
-          <Link to="/" className="hover:text-text-primary">
-            首页
-          </Link>
-          <Link to="/notes" className="hover:text-text-primary">
-            笔记
-          </Link>
-          <Link to="/works" className="hover:text-text-primary">
-            作品
-          </Link>
-          <Link to="/archive" className="hover:text-text-primary">
-            归档
-          </Link>
-          <Link to="/about" className="hover:text-text-primary">
-            关于
-          </Link>
-          <Link to="/guestbook" className="hover:text-text-primary">
-            留言板
-          </Link>
+        <nav className="hidden items-center gap-4 text-sm text-text-secondary md:flex">
+          {navItems.map(item => {
+            const isActive = activePath === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`rounded-full px-3 py-1.5 text-xs transition-colors md:text-sm ${
+                  isActive ? 'bg-accent-primary text-black' : 'hover:text-text-primary'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">

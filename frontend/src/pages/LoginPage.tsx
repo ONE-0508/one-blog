@@ -71,43 +71,49 @@ function LoginPage() {
   };
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center">
-      <section className="space-y-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
-          ADMIN ACCESS
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-          欢迎回来，
-          <br className="hidden sm:block" />
-          继续维护你的内容世界。
-        </h1>
-        <p className="max-w-xl text-sm text-text-secondary md:text-base">
-          管理系统用于发布文章、整理项目与维护笔记。统一使用 ONE Blog 的设计语言，
-          保持清晰、克制的阅读体验。
-        </p>
-        <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4 text-sm text-text-secondary">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-            默认管理员账号
-          </p>
-          <div className="mt-2 space-y-1">
-            <p>
-              用户名：<span className="font-semibold text-text-primary">admin</span>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-stretch">
+      <section className="relative space-y-6 overflow-hidden rounded-[1.75rem] border border-border-subtle bg-bg-elevated-soft/70 p-6 shadow-soft md:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-16 h-40 w-40 rounded-full bg-accent-primary/30 blur-3xl animate-float-slow" />
+        <div className="pointer-events-none absolute bottom-10 left-8 h-32 w-32 rounded-full bg-accent-underline-to/20 blur-3xl animate-float-slower" />
+        <div className="relative space-y-5">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
+              ADMIN ACCESS
             </p>
-            <p>
-              密码：<span className="font-semibold text-text-primary">admin123</span>
+            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+              欢迎回来，
+              <br className="hidden sm:block" />
+              继续维护你的内容世界。
+            </h1>
+            <p className="max-w-xl text-sm text-text-secondary md:text-base">
+              管理系统用于发布文章、整理项目与维护笔记。统一使用 ONE Blog 的设计语言，
+              保持清晰、克制的阅读体验。
             </p>
+          </div>
+          <div className="rounded-2xl border border-border-subtle bg-bg-elevated/80 p-4 text-sm text-text-secondary">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+              默认管理员账号
+            </p>
+            <div className="mt-2 space-y-1">
+              <p>
+                用户名：<span className="font-semibold text-text-primary">admin</span>
+              </p>
+              <p>
+                密码：<span className="font-semibold text-text-primary">admin123</span>
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       <div className="rounded-[1.75rem] border border-border-subtle bg-bg-elevated/80 p-6 shadow-soft md:p-8">
         <div className="space-y-6">
-          <div>
+          <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-text-muted">
               LOGIN
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">用户登录</h2>
-            <p className="mt-2 text-sm text-text-secondary">使用用户名或邮箱登录您的账户</p>
+            <h2 className="text-2xl font-semibold tracking-tight">用户登录</h2>
+            <p className="text-sm text-text-secondary">使用用户名或邮箱登录您的账户</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
