@@ -77,10 +77,10 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix --cache"
+      "pnpm --dir admin eslint --fix --cache"
     ],
     "*.{css, less}": [
-      "stylelint --fix"
+      "pnpm --dir admin stylelint --fix"
     ]
   }
 }
