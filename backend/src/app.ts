@@ -9,6 +9,7 @@ import { errorHandler, notFoundHandler } from '@/middlewares/errorHandler';
 import logger from '@/config/logger';
 import { testDatabaseConnection, syncDatabase } from '@/config/database';
 import authRoutes from '@/routes/auth.routes';
+import articleRoutes from '@/routes/article.routes';
 
 class App {
   public app: Application;
@@ -95,7 +96,7 @@ class App {
 
     // API routes
     this.app.use('/api/v1/auth', authRoutes);
-    // this.app.use('/api/v1/articles', articleRoutes);
+    this.app.use('/api/v1/articles', articleRoutes);
     // this.app.use('/api/v1/notes', noteRoutes);
     // this.app.use('/api/v1/comments', commentRoutes);
     // this.app.use('/api/v1/projects', projectRoutes);

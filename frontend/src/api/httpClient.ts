@@ -3,7 +3,7 @@ import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestCo
 import { clearAccessToken, getAccessToken, getRefreshToken } from './authStorage';
 import { refreshToken } from './auth';
 
-const baseURL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
+const baseURL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api/v1';
 
 export const httpClient = axios.create({
   baseURL,

@@ -122,7 +122,8 @@ const sequelize = createSequelizeInstance();
 
 // 手动添加模型
 import { User } from '@/models/user.model';
-sequelize.addModels([User]);
+import { Article } from '@/models/article.model';
+sequelize.addModels([User, Article]);
 
 /**
  * 测试数据库连接
