@@ -48,15 +48,35 @@ const getDatabaseConfig = (): DatabaseConfig => {
     };
   }
 
-  // 开发环境使用PostgreSQL
+  // 开发环境支持SQLite与PostgreSQL
   if (!isProduction) {
+    const dialect = (process.env.DB_DIALECT || 'postgres') as Dialect;
+
+    if (dialect === 'sqlite') {
+      return {
+        host: 'localhost',
+        port: 0,
+        database: process.env.DB_NAME || 'blog_dev.sqlite',
+        username: 'sqlite',
+        password: '',
+        dialect,
+        logging: false,
+        pool: {
+          max: 1,
+          min: 0,
+          acquire: 30000,
+          idle: 10000,
+        },
+      };
+    }
+
     return {
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT || '5432', 10),
       database: process.env.DB_NAME || 'blog_dev',
       username: process.env.DB_USER || 'mac',
       password: process.env.DB_PASSWORD || '',
-      dialect: 'postgres' as Dialect,
+      dialect,
       logging: false,
       pool: {
         max: 5,
