@@ -34,7 +34,7 @@ export class ArticleController {
   async getArticleById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      if (!id) {
+      if (!id || Array.isArray(id)) {
         throw new BadRequestError('Article id is required');
       }
 
@@ -89,7 +89,7 @@ export class ArticleController {
   async updateArticle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      if (!id) {
+      if (!id || Array.isArray(id)) {
         throw new BadRequestError('Article id is required');
       }
 
@@ -127,7 +127,7 @@ export class ArticleController {
   async deleteArticle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      if (!id) {
+      if (!id || Array.isArray(id)) {
         throw new BadRequestError('Article id is required');
       }
 
