@@ -52,19 +52,23 @@ function HomePage() {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start">
       <MainContent>
         <section className="space-y-6">
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
-              ONE BLOG · LONGFORM NOTES
-            </p>
-            <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-              记录构建者的思考路径，
-              <br className="hidden sm:block" />
-              用文章搭建长期记忆。
-            </h1>
-            <p className="max-w-2xl text-sm text-text-secondary md:text-base">
-              这里聚合前端工程、产品思考与个人成长的长期笔记。主页会持续更新最新文章、
-              精选专题与正在进行的项目进度。
-            </p>
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-border-subtle bg-bg-elevated-soft/70 p-6">
+            <div className="pointer-events-none absolute -right-16 -top-20 h-44 w-44 rounded-full bg-accent-primary/30 blur-3xl animate-float-slow" />
+            <div className="pointer-events-none absolute -bottom-16 left-12 h-40 w-40 rounded-full bg-accent-underline-to/20 blur-3xl animate-float-slower" />
+            <div className="space-y-3 relative">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
+                ONE BLOG · LONGFORM NOTES
+              </p>
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+                记录构建者的思考路径，
+                <br className="hidden sm:block" />
+                用文章搭建长期记忆。
+              </h1>
+              <p className="max-w-2xl text-sm text-text-secondary md:text-base">
+                这里聚合前端工程、产品思考与个人成长的长期笔记。主页会持续更新最新文章、
+                精选专题与正在进行的项目进度。
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">

@@ -57,15 +57,6 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="hidden items-center gap-1 rounded-full border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs text-text-secondary md:inline-flex"
-            disabled
-          >
-            <span className="i-lucide-search h-3.5 w-3.5" aria-hidden="true" />
-            <span>暂未开放</span>
-          </button>
-
           <div className="relative">
             <button
               type="button"
