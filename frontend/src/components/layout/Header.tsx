@@ -20,24 +20,24 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
-          <button type="button" className="hover:text-text-primary">
+          <Link to="/" className="hover:text-text-primary">
             首页
-          </button>
-          <button type="button" className="hover:text-text-primary">
+          </Link>
+          <Link to="/notes" className="hover:text-text-primary">
             笔记
-          </button>
-          <button type="button" className="hover:text-text-primary">
+          </Link>
+          <Link to="/works" className="hover:text-text-primary">
             作品
-          </button>
-          <button type="button" className="hover:text-text-primary">
+          </Link>
+          <Link to="/archive" className="hover:text-text-primary">
             归档
-          </button>
-          <button type="button" className="hover:text-text-primary">
+          </Link>
+          <Link to="/about" className="hover:text-text-primary">
             关于
-          </button>
-          <button type="button" className="hover:text-text-primary">
+          </Link>
+          <Link to="/guestbook" className="hover:text-text-primary">
             留言板
-          </button>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2">

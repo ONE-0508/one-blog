@@ -6,6 +6,11 @@ import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import PostDetailPage from '../pages/PostDetailPage';
+import NotesPage from '../pages/NotesPage';
+import WorksPage from '../pages/WorksPage';
+import ArchivePage from '../pages/ArchivePage';
+import AboutPage from '../pages/AboutPage';
+import GuestbookPage from '../pages/GuestbookPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -20,6 +25,26 @@ const router = createBrowserRouter([
       {
         path: 'posts/:id',
         element: <PostDetailPage />,
+      },
+      {
+        path: 'notes',
+        element: <NotesPage />,
+      },
+      {
+        path: 'works',
+        element: <WorksPage />,
+      },
+      {
+        path: 'archive',
+        element: <ArchivePage />,
+      },
+      {
+        path: 'about',
+        element: <AboutPage />,
+      },
+      {
+        path: 'guestbook',
+        element: <GuestbookPage />,
       },
       {
         path: 'login',

@@ -49,37 +49,83 @@ function HomePage() {
   }, [page, pageSize]);
 
   return (
-    <div className="grid gap-6 md:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)] md:items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start">
       <MainContent>
-        <section className="space-y-4 md:space-y-5">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-              PERSONAL BLOG · DIGITAL GARDEN
+        <section className="space-y-6">
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
+              ONE BLOG · LONGFORM NOTES
             </p>
-            <h1 className="text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
-              记录构建者的一切思考，
+            <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+              记录构建者的思考路径，
               <br className="hidden sm:block" />
-              从一篇博客开始。
+              用文章搭建长期记忆。
             </h1>
-            <p className="max-w-xl text-sm text-text-secondary md:text-base">
-              这里是我的长期线上笔记本，围绕前端工程、产品思考与个人成长持续更新。
-              首页聚合了最新文章、精选内容与正在进行的项目。
+            <p className="max-w-2xl text-sm text-text-secondary md:text-base">
+              这里聚合前端工程、产品思考与个人成长的长期笔记。主页会持续更新最新文章、
+              精选专题与正在进行的项目进度。
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div className="flex flex-wrap gap-3">
             <Link
               to="#latest-posts"
-              className="inline-flex items-center justify-center rounded-full bg-accent-primary px-4 py-1.5 text-xs font-medium text-black shadow-subtle hover:brightness-105 md:px-5 md:py-2 md:text-sm"
+              className="inline-flex items-center justify-center rounded-full bg-accent-primary px-5 py-2 text-xs font-semibold text-black shadow-subtle hover:brightness-105 md:text-sm"
             >
               浏览最新文章
             </Link>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-4 py-1.5 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:px-5 md:py-2 md:text-sm"
+            <Link
+              to="/works"
+              className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-5 py-2 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:text-sm"
             >
               查看作品与项目
-            </button>
+            </Link>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              { label: '文章总览', value: total ? `${total} 篇` : '持续更新' },
+              { label: '专题计划', value: '4 个专题' },
+              { label: '正在进行', value: '2 个项目' },
+            ].map(item => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4"
+              >
+                <p className="text-xs uppercase tracking-[0.22em] text-text-muted">{item.label}</p>
+                <p className="mt-2 text-lg font-semibold text-text-primary">{item.value}</p>
+                <p className="mt-1 text-xs text-text-secondary">本周同步更新</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className="h-px bg-divider-subtle" />
+
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold tracking-wide md:text-base">正在进行</h2>
+            <span className="text-xs text-text-muted">Focus Sprint</span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {[
+              {
+                title: '设计系统重塑计划',
+                desc: '统一前端 UI 语言与交互节奏，逐页清理视觉噪音。',
+              },
+              {
+                title: '内容中台升级',
+                desc: '完善文章、项目、笔记之间的关联与索引体验。',
+              },
+            ].map(item => (
+              <div
+                key={item.title}
+                className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/70 p-4"
+              >
+                <p className="text-sm font-semibold text-text-primary">{item.title}</p>
+                <p className="mt-2 text-xs text-text-secondary">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 

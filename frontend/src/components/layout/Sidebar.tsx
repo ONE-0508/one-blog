@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { useAuth } from '../../contexts/useAuth';
 
 function Sidebar() {
@@ -20,9 +21,9 @@ function Sidebar() {
     <aside className="space-y-4 rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4 shadow-subtle md:space-y-5 md:p-5 transition-colors duration-300 ease-out">
       {/* 用户信息区域 */}
       {user && (
-        <div className="rounded-xl border border-border-subtle bg-gradient-to-br from-blue-50/50 to-purple-50/50 p-4 dark:from-blue-900/20 dark:to-purple-900/20">
+        <div className="rounded-xl border border-border-subtle bg-bg-elevated/80 p-4">
           <div className="flex items-start space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary text-black">
               <span className="text-sm font-semibold">
                 {(user.displayName || user.username).charAt(0).toUpperCase()}
               </span>
@@ -34,7 +35,7 @@ function Sidebar() {
                     {user.displayName || user.username}
                   </h3>
                   <div className="mt-1 flex items-center space-x-2">
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    <span className="inline-flex items-center rounded-full border border-border-subtle bg-chip-bg px-2 py-0.5 text-xs font-medium text-text-secondary">
                       {user.role === 'admin' ? '管理员' : user.role === 'editor' ? '编辑' : '用户'}
                     </span>
                     <span className="text-xs text-text-muted">
@@ -47,7 +48,7 @@ function Sidebar() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="mt-3 w-full rounded-lg border border-border-subtle bg-white px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-red-300 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-red-800 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                className="mt-3 w-full rounded-lg border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-accent-primary/60 hover:text-text-primary disabled:opacity-50"
               >
                 {isLoggingOut ? (
                   <span className="flex items-center justify-center">
@@ -82,24 +83,9 @@ function Sidebar() {
           热门文章
         </h2>
         <div className="mt-3 space-y-2.5 text-sm">
-          <button
-            type="button"
-            className="block text-left text-text-secondary hover:text-text-primary"
-          >
-            文章1
-          </button>
-          <button
-            type="button"
-            className="block text-left text-text-secondary hover:text-text-primary"
-          >
-            文章2
-          </button>
-          <button
-            type="button"
-            className="block text-left text-text-secondary hover:text-text-primary"
-          >
-            文章3
-          </button>
+          <span className="block text-left text-text-secondary">文章1</span>
+          <span className="block text-left text-text-secondary">文章2</span>
+          <span className="block text-left text-text-secondary">文章3</span>
         </div>
       </div>
 
@@ -110,24 +96,24 @@ function Sidebar() {
           快速入口
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
+          <Link
+            to="/#latest-posts"
             className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
           >
             最新文章
-          </button>
-          <button
-            type="button"
+          </Link>
+          <Link
+            to="/notes"
             className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
           >
             笔记时间线
-          </button>
-          <button
-            type="button"
+          </Link>
+          <Link
+            to="/works"
             className="rounded-full border border-chip-border bg-chip-bg px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/70 hover:text-text-primary"
           >
             作品精选
-          </button>
+          </Link>
         </div>
       </div>
     </aside>
