@@ -15,56 +15,80 @@ import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
-    path: '/login',
-    element: (
-      <ProtectedRoute requireAuth={false}>
-        <LoginPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/register',
-    element: (
-      <ProtectedRoute requireAuth={false}>
-        <RegisterPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
     path: '/',
-    element: (
-      <ProtectedRoute>
-        <AppRouteLayout />
-      </ProtectedRoute>
-    ),
+    element: <AppRouteLayout />,
     children: [
       {
+        path: 'login',
+        element: (
+          <ProtectedRoute requireAuth={false}>
+            <LoginPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'register',
+        element: (
+          <ProtectedRoute requireAuth={false}>
+            <RegisterPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         index: true,
-        element: <HomePage />,
+        element: (
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'posts/:id',
-        element: <PostDetailPage />,
+        element: (
+          <ProtectedRoute>
+            <PostDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'notes',
-        element: <NotesPage />,
+        element: (
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'works',
-        element: <WorksPage />,
+        element: (
+          <ProtectedRoute>
+            <WorksPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'archive',
-        element: <ArchivePage />,
+        element: (
+          <ProtectedRoute>
+            <ArchivePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'about',
-        element: <AboutPage />,
+        element: (
+          <ProtectedRoute>
+            <AboutPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'guestbook',
-        element: <GuestbookPage />,
+        element: (
+          <ProtectedRoute>
+            <GuestbookPage />
+          </ProtectedRoute>
+        ),
       },
       { path: '*', element: <NotFoundPage /> },
     ],
