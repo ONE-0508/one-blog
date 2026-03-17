@@ -1,10 +1,13 @@
 import { useId, useState } from 'react';
 import { Navigate, useNavigate, useLocation } from 'react-router';
+import { motion } from 'framer-motion';
 
 import { login } from '../api/auth';
 import { toApiError } from '../api/errors';
 import { useAuth } from '../contexts/useAuth';
 import type { LoginRequest } from '../types/auth';
+
+const MotionButton = motion.button;
 
 const initialForm: LoginRequest = {
   username: '',
@@ -109,8 +112,10 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="flex space-x-2 rounded-full border border-border-subtle bg-bg-elevated-soft p-1">
-              <button
+              <MotionButton
                 type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className={`flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all md:text-sm ${
                   loginType === 'username'
                     ? 'bg-accent-primary text-black'
@@ -120,9 +125,11 @@ function LoginPage() {
                 disabled={isSubmitting}
               >
                 用户名登录
-              </button>
-              <button
+              </MotionButton>
+              <MotionButton
                 type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className={`flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all md:text-sm ${
                   loginType === 'email'
                     ? 'bg-accent-primary text-black'
@@ -132,7 +139,7 @@ function LoginPage() {
                 disabled={isSubmitting}
               >
                 邮箱登录
-              </button>
+              </MotionButton>
             </div>
 
             <div className="space-y-2">
@@ -183,9 +190,11 @@ function LoginPage() {
               </div>
             )}
 
-            <button
+            <MotionButton
               type="submit"
               disabled={isSubmitting}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full rounded-full bg-accent-primary px-4 py-2.5 text-sm font-semibold text-black shadow-subtle transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? (
@@ -210,7 +219,7 @@ function LoginPage() {
               ) : (
                 '登录'
               )}
-            </button>
+            </MotionButton>
           </form>
 
           <div className="text-center text-sm text-text-secondary">

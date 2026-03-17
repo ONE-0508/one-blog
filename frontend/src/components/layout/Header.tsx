@@ -1,7 +1,10 @@
 import { Link, useNavigate } from 'react-router';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 import { useAuth } from '../../contexts/useAuth';
+
+const MotionButton = motion.button;
 
 interface HeaderProps {
   theme: 'light' | 'dark';
@@ -58,18 +61,20 @@ function Header({ theme, onToggleTheme }: HeaderProps) {
 
         <div className="flex items-center gap-2">
           <div className="relative">
-            <button
+            <MotionButton
               type="button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
               onClick={() => setIsMenuOpen(prev => !prev)}
             >
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-primary text-black text-[11px] font-semibold">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-primary text-[11px] font-semibold text-black">
                 {(user?.displayName || user?.username || 'U').charAt(0).toUpperCase()}
               </span>
               <span className="hidden sm:inline">
                 {user?.displayName || user?.username || '用户'}
               </span>
-            </button>
+            </MotionButton>
 
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { motion } from 'framer-motion';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';
 import { fetchArticles } from '../api/articles';
 import type { Article } from '../types/article';
 import ArticleList from '../features/posts/components/ArticleList';
 import ArticlePagination from '../features/posts/components/ArticlePagination';
+
+const MotionLink = motion(Link);
 
 function HomePage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -72,18 +75,22 @@ function HomePage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Link
+            <MotionLink
               to="#latest-posts"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center rounded-full bg-accent-primary px-5 py-2 text-xs font-semibold text-black shadow-subtle hover:brightness-105 md:text-sm"
             >
               浏览最新文章
-            </Link>
-            <Link
+            </MotionLink>
+            <MotionLink
               to="/works"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-5 py-2 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:text-sm"
             >
               查看作品与项目
-            </Link>
+            </MotionLink>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">

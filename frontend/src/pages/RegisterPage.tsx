@@ -1,10 +1,13 @@
 import { useId, useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router';
+import { motion } from 'framer-motion';
 
 import { register } from '../api/auth';
 import { getAccessToken } from '../api/authStorage';
 import { toApiError } from '../api/errors';
 import type { RegisterRequest } from '../types/auth';
+
+const MotionButton = motion.button;
 
 const initialForm: RegisterRequest = {
   username: '',
@@ -227,13 +230,15 @@ function RegisterPage() {
               </div>
             )}
 
-            <button
+            <MotionButton
               type="submit"
               disabled={isSubmitting}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full rounded-full bg-accent-primary px-4 py-2.5 text-sm font-semibold text-black shadow-subtle transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? '提交中...' : '注册'}
-            </button>
+            </MotionButton>
           </form>
         </div>
       </div>
