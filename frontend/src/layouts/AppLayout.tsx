@@ -1,28 +1,58 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router';
 
 import Header from '../components/layout/Header.tsx';
 import Footer from '../components/layout/Footer.tsx';
+import {
+  createThemeTokens,
+  DEFAULT_THEME_COLOR,
+  normalizeHexColor,
+  THEME_STORAGE_KEY,
+  type ThemeMode,
+  type ThemeState,
+} from '../utils/theme';
 
-type Theme = 'light' | 'dark';
+function getInitialThemeState(): ThemeState {
+  if (typeof window === 'undefined') {
+    return {
+      themeColor: DEFAULT_THEME_COLOR,
+      themeMode: 'dark',
+      followSystem: true,
+    };
+  }
 
-function getInitialTheme(): Theme {
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (!stored) {
+      return {
+        themeColor: DEFAULT_THEME_COLOR,
+        themeMode: 'dark',
+        followSystem: true,
+      };
+    }
+
+    const parsed = JSON.parse(stored) as Partial<ThemeState>;
+    return {
+      themeColor: normalizeHexColor(parsed.themeColor ?? DEFAULT_THEME_COLOR),
+      themeMode: parsed.themeMode === 'light' ? 'light' : 'dark',
+      followSystem: parsed.followSystem ?? true,
+    };
+  } catch {
+    return {
+      themeColor: DEFAULT_THEME_COLOR,
+      themeMode: 'dark',
+      followSystem: true,
+    };
+  }
+}
+
+function getInitialSystemMode(): ThemeMode {
   if (typeof window === 'undefined') {
     return 'dark';
   }
 
-  try {
-    const stored = window.localStorage.getItem('one-blog-theme');
-    if (stored === 'light' || stored === 'dark') {
-      return stored;
-    }
-  } catch {
-    // ignore
-  }
-
-  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  return prefersDark ? 'dark' : 'light';
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 interface AppLayoutProps {
@@ -30,23 +60,77 @@ interface AppLayoutProps {
 }
 
 function AppLayout({ children }: AppLayoutProps) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [themeState, setThemeState] = useState<ThemeState>(getInitialThemeState);
+  const [systemMode, setSystemMode] = useState<ThemeMode>(getInitialSystemMode);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      setSystemMode(event.matches ? 'dark' : 'light');
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
+  const effectiveMode: ThemeMode = useMemo(
+    () => (themeState.followSystem ? systemMode : themeState.themeMode),
+    [themeState.followSystem, themeState.themeMode, systemMode]
+  );
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
     const root = document.documentElement;
-    root.dataset.theme = theme;
+    const tokens = createThemeTokens(themeState.themeColor, effectiveMode);
+
+    root.dataset.theme = effectiveMode;
+    root.style.setProperty('--color-accent-primary', tokens.accentPrimary);
+    root.style.setProperty('--color-accent-secondary', tokens.accentSecondary);
+    root.style.setProperty('--color-accent-soft', tokens.accentSoft);
+    root.style.setProperty('--color-accent-underline-from', tokens.accentUnderlineFrom);
+    root.style.setProperty('--color-accent-underline-to', tokens.accentUnderlineTo);
+    root.style.setProperty('--color-accent-contrast', tokens.accentContrast);
+    root.style.setProperty('--color-border-subtle', tokens.borderSubtle);
+    root.style.setProperty('--color-divider-subtle', tokens.dividerSubtle);
+    root.style.setProperty('--color-chip-bg', tokens.chipBg);
+    root.style.setProperty('--color-chip-border', tokens.chipBorder);
+    root.style.setProperty('--shadow-soft', tokens.shadowSoft);
+    root.style.setProperty('--shadow-subtle', tokens.shadowSubtle);
 
     try {
-      window.localStorage.setItem('one-blog-theme', theme);
+      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themeState));
     } catch {
       // ignore
     }
-  }, [theme]);
+  }, [themeState, effectiveMode]);
 
-  const handleToggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  const handleSetThemeMode = (mode: ThemeMode) => {
+    setThemeState(prev => ({
+      ...prev,
+      themeMode: mode,
+    }));
+  };
+
+  const handleSetFollowSystem = (followSystem: boolean) => {
+    setThemeState(prev => ({
+      ...prev,
+      followSystem,
+    }));
+  };
+
+  const handleSetThemeColor = (themeColor: string) => {
+    setThemeState(prev => ({
+      ...prev,
+      themeColor: normalizeHexColor(themeColor),
+    }));
   };
 
   const { pathname } = useLocation();
@@ -54,7 +138,16 @@ function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen bg-bg-page text-text-primary flex flex-col transition-colors duration-300 ease-out">
-      {!isAuthRoute && <Header theme={theme} onToggleTheme={handleToggleTheme} />}
+      {!isAuthRoute && (
+        <Header
+          mode={effectiveMode}
+          themeColor={themeState.themeColor}
+          followSystem={themeState.followSystem}
+          onSetThemeMode={handleSetThemeMode}
+          onSetFollowSystem={handleSetFollowSystem}
+          onSetThemeColor={handleSetThemeColor}
+        />
+      )}
 
       <main className={isAuthRoute ? 'flex flex-1 items-center' : 'flex-1'}>
         <div

@@ -125,7 +125,7 @@ function LoginPage() {
                   whileTap={{ scale: 0.98 }}
                   className={`flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all md:text-sm ${
                     loginType === 'username'
-                      ? 'bg-accent-primary text-black'
+                      ? 'bg-accent-primary text-accent-contrast'
                       : 'text-text-secondary hover:text-text-primary'
                   }`}
                   onClick={() => setLoginType('username')}
@@ -139,7 +139,7 @@ function LoginPage() {
                   whileTap={{ scale: 0.98 }}
                   className={`flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all md:text-sm ${
                     loginType === 'email'
-                      ? 'bg-accent-primary text-black'
+                      ? 'bg-accent-primary text-accent-contrast'
                       : 'text-text-secondary hover:text-text-primary'
                   }`}
                   onClick={() => setLoginType('email')}
@@ -202,7 +202,7 @@ function LoginPage() {
                 disabled={isSubmitting}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full rounded-full bg-accent-primary px-4 py-2.5 text-sm font-semibold text-black shadow-subtle transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-full bg-accent-primary px-4 py-2.5 text-sm font-semibold text-accent-contrast shadow-subtle transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center">

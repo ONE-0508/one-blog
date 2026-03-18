@@ -13,7 +13,7 @@ function Sidebar() {
           </p>
           <div className="mt-3 space-y-2 text-sm">
             <div className="flex items-center gap-2 text-text-primary">
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-primary text-[11px] font-semibold text-black">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-primary text-[11px] font-semibold text-accent-contrast">
                 {(user.displayName || user.username).charAt(0).toUpperCase()}
               </span>
               <span className="font-semibold">{user.displayName || user.username}</span>

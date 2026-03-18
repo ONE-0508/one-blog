@@ -10,7 +10,7 @@ function NotFoundPage() {
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           to="/"
-          className="inline-flex items-center justify-center rounded-full bg-accent-primary px-4 py-2 text-sm font-semibold text-black shadow-subtle hover:brightness-105"
+          className="inline-flex items-center justify-center rounded-full bg-accent-primary px-4 py-2 text-sm font-semibold text-accent-contrast shadow-subtle hover:brightness-105"
         >
           返回首页
         </Link>
