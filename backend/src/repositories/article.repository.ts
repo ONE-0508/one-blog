@@ -69,7 +69,7 @@ class ArticleRepository {
   }
 
   async updateById(id: string, data: Partial<Article>): Promise<Article | null> {
-    const [_, [updated]] = await Article.update(data, {
+    const [affectedCount, updatedRows] = await Article.update(data, {
       where: {
         id,
         isDeleted: false,
@@ -77,7 +77,15 @@ class ArticleRepository {
       returning: true,
     });
 
-    return updated ?? null;
+    if (affectedCount === 0) {
+      return null;
+    }
+
+    if (Array.isArray(updatedRows) && updatedRows.length > 0) {
+      return updatedRows[0] ?? null;
+    }
+
+    return this.findById(id, { includeDeleted: false, includeAuthor: true });
   }
 
   async softDelete(id: string, deletedAt: Date): Promise<boolean> {

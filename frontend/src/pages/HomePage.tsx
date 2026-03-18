@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { MouseEvent } from 'react';
 import { motion } from 'framer-motion';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';
@@ -11,6 +12,12 @@ const MotionLink = motion(Link);
 
 function HomePage() {
   const [articles, setArticles] = useState<Article[]>([]);
+
+  const handleScrollToLatestPosts = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const latestPostsSection = document.getElementById('latest-posts');
+    latestPostsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -74,6 +81,7 @@ function HomePage() {
           <div className="flex flex-wrap gap-3">
             <MotionLink
               to="#latest-posts"
+              onClick={handleScrollToLatestPosts}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center rounded-full bg-accent-primary px-5 py-2 text-xs font-semibold text-black shadow-subtle hover:brightness-105 md:text-sm"
