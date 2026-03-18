@@ -6,15 +6,12 @@ import Sidebar from '../components/layout/Sidebar';
 import { fetchArticles } from '../api/articles';
 import type { Article } from '../types/article';
 import ArticleList from '../features/posts/components/ArticleList';
-import ArticlePagination from '../features/posts/components/ArticlePagination';
 
 const MotionLink = motion(Link);
 
 function HomePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -25,7 +22,7 @@ function HomePage() {
       try {
         setIsLoading(true);
         setErrorMessage('');
-        const response = await fetchArticles(page, pageSize);
+        const response = await fetchArticles(1, 3);
         if (response.success) {
           if (!isMounted) return;
           setArticles(response.data.data);
@@ -49,7 +46,7 @@ function HomePage() {
     return () => {
       isMounted = false;
     };
-  }, [page, pageSize]);
+  }, []);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start">
@@ -84,12 +81,12 @@ function HomePage() {
               浏览最新文章
             </MotionLink>
             <MotionLink
-              to="/works"
+              to="/archive"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-5 py-2 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:text-sm"
             >
-              查看作品与项目
+              查看全部文章
             </MotionLink>
           </div>
 
@@ -99,7 +96,7 @@ function HomePage() {
               <p className="mt-2 text-lg font-semibold text-text-primary">
                 {total ? `${total} 篇` : '暂无数据'}
               </p>
-              <p className="mt-1 text-xs text-text-secondary">本周同步更新</p>
+              <p className="mt-1 text-xs text-text-secondary">首页展示最新 3 篇</p>
             </div>
             <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
               <p className="text-xs uppercase tracking-[0.22em] text-text-muted">专题计划</p>
@@ -129,7 +126,12 @@ function HomePage() {
         <section id="latest-posts" className="space-y-4 scroll-mt-20">
           <div className="flex items-baseline justify-between gap-2">
             <h2 className="text-sm font-semibold tracking-wide md:text-base">最新文章</h2>
-            <span className="text-xs text-text-muted">共 {total} 篇</span>
+            <Link
+              to="/archive"
+              className="text-xs text-text-muted hover:text-text-primary transition-colors"
+            >
+              查看全部（共 {total} 篇）
+            </Link>
           </div>
 
           {isLoading ? (
@@ -142,15 +144,6 @@ function HomePage() {
             </div>
           ) : (
             <ArticleList articles={articles} />
-          )}
-
-          {!isLoading && !errorMessage && (
-            <ArticlePagination
-              page={page}
-              pageSize={pageSize}
-              total={total}
-              onPageChange={setPage}
-            />
           )}
         </section>
       </MainContent>

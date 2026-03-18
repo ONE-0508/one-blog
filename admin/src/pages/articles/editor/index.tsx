@@ -3,8 +3,10 @@ import { Button, Card, Form, Input, Message, Space } from '@arco-design/web-reac
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import qs from 'query-string';
+import MDEditor from '@uiw/react-md-editor';
 
-const { TextArea } = Input;
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
 
 export default function ArticleEditor() {
   const history = useHistory();
@@ -71,7 +73,7 @@ export default function ArticleEditor() {
 
   return (
     <Card title={articleId ? '编辑文章' : '新建文章'}>
-      <Form form={form} layout="vertical" style={{ maxWidth: 720 }}>
+      <Form form={form} layout="vertical" style={{ maxWidth: 860 }}>
         <Form.Item
           label="标题"
           field="title"
@@ -87,8 +89,18 @@ export default function ArticleEditor() {
           field="content"
           rules={[{ required: true, message: '请输入内容' }]}
         >
-          <TextArea rows={12} placeholder="请输入内容" />
+          <MDEditor
+            height={420}
+            preview="edit"
+            textareaProps={{
+              placeholder:
+                '支持 Markdown 富文本。代码块示例：\n```ts\nconst hello = "world";\n```',
+            }}
+          />
         </Form.Item>
+        <div style={{ marginTop: -8, marginBottom: 16, color: 'var(--color-text-3)', fontSize: 12 }}>
+          支持标题、粗体、引用、表格、链接、图片和代码块（```语言）
+        </div>
         <Space>
           <Button type="primary" onClick={handleSubmit} loading={loading}>
             {articleId ? '保存修改' : '创建文章'}
