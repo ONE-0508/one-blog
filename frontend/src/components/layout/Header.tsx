@@ -1,69 +1,121 @@
-function Header() {
+import { Link, useLocation, useNavigate } from 'react-router';
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+
+import { useAuth } from '../../contexts/useAuth';
+
+const MotionButton = motion.button;
+
+interface HeaderProps {
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
+}
+
+const navItems = [
+  { to: '/', label: '首页' },
+  { to: '/notes', label: '笔记' },
+  { to: '/works', label: '作品' },
+  { to: '/archive', label: '全部文章' },
+  { to: '/about', label: '关于' },
+  { to: '/guestbook', label: '留言板' },
+];
+
+function Header({ theme, onToggleTheme }: HeaderProps) {
+  const isDark = theme === 'dark';
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const activePath = useMemo(() => location.pathname, [location.pathname]);
+
+  const handleLogout = () => {
+    logout()
+      .then(() => {
+        void navigate('/login', { replace: true });
+      })
+      .catch(() => {
+        void navigate('/login', { replace: true });
+      });
+  };
+
   return (
-    <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20">
+    <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20 transition-colors duration-300 ease-out">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-linear-to-br from-accent-primary to-accent-underline-to shadow-subtle" />
           <div className="flex flex-col leading-tight">
-            <span className="font-semibold tracking-wide">
-              ONE Blog
-            </span>
-            <span className="text-xs text-text-muted">
-              记录 · 思考 · 构建
-            </span>
+            <span className="font-semibold tracking-wide">ONE Blog</span>
+            <span className="text-xs text-text-muted">记录 · 思考 · 构建</span>
           </div>
-        </div>
+        </Link>
 
-        <nav className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
-          <button type="button" className="hover:text-text-primary">
-            首页
-          </button>
-          <button type="button" className="hover:text-text-primary">
-            笔记
-          </button>
-          <button type="button" className="hover:text-text-primary">
-            作品
-          </button>
-          <button type="button" className="hover:text-text-primary">
-            归档
-          </button>
-          <button type="button" className="hover:text-text-primary">
-            关于
-          </button>
-          <button type="button" className="hover:text-text-primary">
-            留言板
-          </button>
+        <nav className="hidden items-center gap-4 text-sm text-text-secondary md:flex">
+          {navItems.map(item => {
+            const isActive = activePath === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`rounded-full px-3 py-1.5 text-xs transition-colors md:text-sm ${
+                  isActive ? 'bg-accent-primary text-black' : 'hover:text-text-primary'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="hidden items-center gap-1 rounded-full border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:inline-flex"
-          >
-            <span className="i-lucide-search h-3.5 w-3.5" aria-hidden="true" />
-            <span>搜索</span>
-          </button>
+          <div className="relative">
+            <MotionButton
+              type="button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
+              onClick={() => setIsMenuOpen(prev => !prev)}
+            >
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-primary text-[11px] font-semibold text-black">
+                {(user?.displayName || user?.username || 'U').charAt(0).toUpperCase()}
+              </span>
+              <span className="hidden sm:inline">
+                {user?.displayName || user?.username || '用户'}
+              </span>
+            </MotionButton>
+
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
+                <div className="space-y-1">
+                  <p className="text-xs text-text-muted">当前用户</p>
+                  <p className="text-sm font-semibold text-text-primary">
+                    {user?.displayName || user?.username || '用户'}
+                  </p>
+                  <p className="text-xs text-text-secondary">{user?.email || '暂未开放'}</p>
+                </div>
+                <div className="my-3 h-px bg-divider-subtle" />
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full rounded-lg border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
+                >
+                  退出登录
+                </button>
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
-            aria-label="切换主题"
+            aria-label={isDark ? '切换为浅色主题' : '切换为深色主题'}
+            onClick={onToggleTheme}
           >
-            ☾
-          </button>
-
-          <button
-            type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:hidden"
-            aria-label="打开导航菜单"
-          >
-            ☰
+            <span aria-hidden="true">{isDark ? '☀' : '☾'}</span>
           </button>
         </div>
       </div>
     </header>
-  )
+  );
 }
 
-export default Header
-
+export default Header;

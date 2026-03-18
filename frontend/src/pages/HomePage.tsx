@@ -1,86 +1,158 @@
-import MainContent from '../components/layout/MainContent'
-import Sidebar from '../components/layout/Sidebar'
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router';
+import { MouseEvent } from 'react';
+import { motion } from 'framer-motion';
+import MainContent from '../components/layout/MainContent';
+import Sidebar from '../components/layout/Sidebar';
+import { fetchArticles } from '../api/articles';
+import type { Article } from '../types/article';
+import ArticleList from '../features/posts/components/ArticleList';
+
+const MotionLink = motion(Link);
 
 function HomePage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  const handleScrollToLatestPosts = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const latestPostsSection = document.getElementById('latest-posts');
+    latestPostsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadArticles = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMessage('');
+        const response = await fetchArticles(1, 3);
+        if (response.success) {
+          if (!isMounted) return;
+          setArticles(response.data.data);
+          setTotal(response.data.total);
+        } else {
+          if (!isMounted) return;
+          setErrorMessage(response.error?.message ?? '文章加载失败');
+        }
+      } catch (error) {
+        if (!isMounted) return;
+        setErrorMessage(error instanceof Error ? error.message : '文章加载失败');
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadArticles();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
-    <div className="grid gap-6 md:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)] md:items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start">
       <MainContent>
-        <section className="space-y-4 md:space-y-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-            PERSONAL BLOG · DIGITAL GARDEN
-          </p>
-          <h1 className="text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
-            记录构建者的一切思考，
-            <br className="hidden sm:block" />
-            从一篇博客开始。
-          </h1>
-          <p className="max-w-xl text-sm text-text-secondary md:text-base">
-            这里是我的长期线上笔记本，围绕前端工程、产品思考与个人成长持续更新。
-            首页聚合了最新文章、精选内容与正在进行的项目。
-          </p>
-          <div className="flex flex-wrap gap-3 pt-1">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full bg-accent-primary px-4 py-1.5 text-xs font-medium text-black shadow-subtle hover:brightness-105 md:px-5 md:py-2 md:text-sm"
+        <section className="space-y-6">
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-border-subtle bg-bg-elevated-soft/70 p-6">
+            <div className="pointer-events-none absolute -right-16 -top-20 h-44 w-44 rounded-full bg-accent-primary/30 blur-3xl animate-float-slow" />
+            <div className="pointer-events-none absolute -bottom-16 left-12 h-40 w-40 rounded-full bg-accent-underline-to/20 blur-3xl animate-float-slower" />
+            <div className="space-y-3 relative">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-text-muted">
+                ONE BLOG · LONGFORM NOTES
+              </p>
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+                记录构建者的思考路径，
+                <br className="hidden sm:block" />
+                用文章搭建长期记忆。
+              </h1>
+              <p className="max-w-2xl text-sm text-text-secondary md:text-base">
+                这里聚合前端工程、产品思考与个人成长的长期笔记。主页会持续更新最新文章、
+                精选专题与正在进行的项目进度。
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <MotionLink
+              to="#latest-posts"
+              onClick={handleScrollToLatestPosts}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center justify-center rounded-full bg-accent-primary px-5 py-2 text-xs font-semibold text-black shadow-subtle hover:brightness-105 md:text-sm"
             >
               浏览最新文章
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-4 py-1.5 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:px-5 md:py-2 md:text-sm"
+            </MotionLink>
+            <MotionLink
+              to="/archive"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft px-5 py-2 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary md:text-sm"
             >
-              查看作品与项目
-            </button>
+              查看全部文章
+            </MotionLink>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">文章总览</p>
+              <p className="mt-2 text-lg font-semibold text-text-primary">
+                {total ? `${total} 篇` : '暂无数据'}
+              </p>
+              <p className="mt-1 text-xs text-text-secondary">首页展示最新 3 篇</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">专题计划</p>
+              <p className="mt-2 text-sm text-text-muted">暂未开放</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/80 p-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-text-muted">正在进行</p>
+              <p className="mt-2 text-sm text-text-muted">暂未开放</p>
+            </div>
           </div>
         </section>
 
         <div className="h-px bg-divider-subtle" />
 
         <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold tracking-wide md:text-base">正在进行</h2>
+            <span className="text-xs text-text-muted">本期重点</span>
+          </div>
+          <div className="rounded-2xl border border-border-subtle bg-bg-elevated-soft/70 p-4 text-sm text-text-muted">
+            暂未开放
+          </div>
+        </section>
+
+        <div className="h-px bg-divider-subtle" />
+
+        <section id="latest-posts" className="space-y-4 scroll-mt-20">
           <div className="flex items-baseline justify-between gap-2">
-            <h2 className="text-sm font-semibold tracking-wide md:text-base">
-              最新文章
-            </h2>
-            <button
-              type="button"
-              className="text-xs text-text-muted hover:text-text-primary"
+            <h2 className="text-sm font-semibold tracking-wide md:text-base">最新文章</h2>
+            <Link
+              to="/archive"
+              className="text-xs text-text-muted hover:text-text-primary transition-colors"
             >
-              查看全部
-            </button>
+              查看全部（共 {total} 篇）
+            </Link>
           </div>
 
-          <div className="space-y-3 md:space-y-4">
-            {[1, 2, 3].map((item) => (
-              <article
-                key={item}
-                className="group rounded-xl border border-border-subtle bg-bg-elevated-soft/70 p-4 transition-colors hover:border-accent-primary/60 md:p-5"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-primary" />
-                    <span>文章 · 前端工程</span>
-                  </div>
-                  <span className="text-[11px] text-text-muted">
-                    2024-01-0{item}
-                  </span>
-                </div>
-                <h3 className="mt-3 text-sm font-semibold tracking-tight text-text-primary md:text-base">
-                  从首页开始：为个人博客设计一套长寿命的信息架构
-                </h3>
-                <p className="mt-2 line-clamp-2 text-xs text-text-secondary md:text-sm">
-                  本文记录了搭建个人博客首页时的思考路径：如何在“最新内容”和“长期沉淀”之间找到平衡，以及怎样通过信息架构引导读者理解你在做的事。
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    架构设计
-                  </span>
-                  <span className="rounded-full border border-chip-border bg-chip-bg px-2.5 py-1 text-[11px] text-text-muted">
-                    个人知识库
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="rounded-lg border border-border-subtle bg-bg-elevated-soft p-4 text-sm text-text-secondary">
+              正在加载文章...
+            </div>
+          ) : errorMessage ? (
+            <div className="rounded-lg border border-border-subtle bg-bg-elevated-soft p-4 text-sm text-text-secondary">
+              {errorMessage}
+            </div>
+          ) : (
+            <ArticleList articles={articles} />
+          )}
         </section>
       </MainContent>
 
@@ -88,8 +160,7 @@ function HomePage() {
         <Sidebar />
       </div>
     </div>
-  )
+  );
 }
 
-export default HomePage
-
+export default HomePage;

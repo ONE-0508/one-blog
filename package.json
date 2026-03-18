@@ -1,0 +1,58 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "个人博客网站项目，包含前端和后端",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && pnpm lint",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "type-check:backend": "cd backend && npm run type-check",
+    "type-check:frontend": "cd frontend && pnpm type-check",
+    "type-check": "npm run type-check:backend && npm run type-check:frontend",
+    "format:backend": "cd backend && npm run format",
+    "format:frontend": "cd frontend && pnpm format",
+    "format": "npm run format:backend && npm run format:frontend",
+    "check:all": "npm run lint && npm run type-check && npm run format",
+    "pre-commit": "lint-staged",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && pnpm dev",
+    "dev": "node scripts/dev.js",
+    "dev:simple": "concurrently --kill-others-on-fail --names \"BACKEND,FRONTEND\" --prefix \"[{name}]\" --prefix-colors \"bgBlue.bold,bgMagenta.bold\" \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "npx prettier --write"
+    ],
+    "backend/src/**/*.ts": [
+      "cd backend && npm run lint:staged",
+      "cd backend && npm run type-check"
+    ],
+    "frontend/src/**/*.{ts,tsx}": [
+      "cd frontend && pnpm lint:staged",
+      "cd frontend && pnpm type-check"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ONE-0508/one-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ONE-0508/one-blog/issues"
+  },
+  "homepage": "https://github.com/ONE-0508/one-blog#readme"
+}

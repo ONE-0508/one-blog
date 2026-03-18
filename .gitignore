@@ -10,6 +10,10 @@ dist/
 frontend/dist/
 build/
 
+### Local database files
+backend/*.sqlite
+backend/blog_dev*
+
 ### Logs
 npm-debug.log*
 yarn-debug.log*

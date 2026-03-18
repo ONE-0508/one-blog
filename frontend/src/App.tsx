@@ -1,12 +1,12 @@
-import AppLayout from './layouts/AppLayout'
-import HomePage from './pages/HomePage'
+import AppRouter from './routes';
+import { AuthProvider } from './contexts/AuthProvider';
 
 function App() {
   return (
-    <AppLayout>
-      <HomePage />
-    </AppLayout>
-  )
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
