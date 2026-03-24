@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { Link } from 'react-router';
-import { MouseEvent } from 'react';
 import { motion } from 'framer-motion';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';

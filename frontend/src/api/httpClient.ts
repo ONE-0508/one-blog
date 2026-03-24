@@ -90,7 +90,11 @@ httpClient.interceptors.response.use(
         return httpClient(originalRequest);
       } catch (refreshError) {
         // 刷新失败，清除token并跳转到登录页
-        processQueue(refreshError, null);
+        const queueError =
+          refreshError instanceof Error
+            ? refreshError
+            : new Error(typeof refreshError === 'string' ? refreshError : 'Token refresh failed');
+        processQueue(queueError, null);
         clearAccessToken();
 
         if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
