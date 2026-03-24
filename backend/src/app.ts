@@ -10,6 +10,8 @@ import logger from '@/config/logger';
 import { testDatabaseConnection, syncDatabase } from '@/config/database';
 import authRoutes from '@/routes/auth.routes';
 import articleRoutes from '@/routes/article.routes';
+import { swaggerSpec } from '@/config/swagger';
+import swaggerUi from 'swagger-ui-express';
 
 class App {
   public app: Application;
@@ -74,6 +76,17 @@ class App {
    * Initialize routes
    */
   private initializeRoutes(): void {
+    /**
+     * @openapi
+     * /health:
+     *   get:
+     *     tags:
+     *       - System
+     *     summary: 健康检查
+     *     responses:
+     *       200:
+     *         description: 服务正常
+     */
     // Health check endpoint
     this.app.get('/health', (_req: Request, res: Response) => {
       res.status(200).json({
@@ -100,6 +113,12 @@ class App {
     // this.app.use('/api/v1/notes', noteRoutes);
     // this.app.use('/api/v1/comments', commentRoutes);
     // this.app.use('/api/v1/projects', projectRoutes);
+
+    // Swagger docs
+    this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    this.app.get('/openapi.json', (_req: Request, res: Response) => {
+      res.status(200).json(swaggerSpec);
+    });
 
     // Root endpoint
     this.app.get('/', (_req: Request, res: Response) => {

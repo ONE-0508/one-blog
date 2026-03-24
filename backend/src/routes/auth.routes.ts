@@ -7,63 +7,223 @@ import { UserRole } from '@/models/user.model';
 const router = Router();
 
 /**
- * @route   POST /api/v1/auth/register
- * @desc    用户注册
- * @access  Public
- * @rate    限制：15分钟内最多5次注册尝试
+ * @openapi
+ * /api/v1/auth/register:
+ *   post:
+ *     tags:
+ *       - 认证管理
+ *     summary: 用户注册
+ *     description: 创建新用户账号
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthRegisterRequest'
+ *     responses:
+ *       201:
+ *         description: 注册成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthLoginResponse'
+ *       400:
+ *         description: 参数错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/register', authLimiter, authController.register.bind(authController));
 
 /**
- * @route   POST /api/v1/auth/login
- * @desc    用户登录
- * @access  Public
- * @rate    限制：15分钟内最多5次登录尝试
+ * @openapi
+ * /api/v1/auth/login:
+ *   post:
+ *     tags:
+ *       - 认证管理
+ *     summary: 用户登录
+ *     description: 使用邮箱或用户名和密码登录
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthLoginRequest'
+ *     responses:
+ *       200:
+ *         description: 登录成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthLoginResponse'
+ *       401:
+ *         description: 账号或密码错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/login', authLimiter, authController.login.bind(authController));
 
 /**
- * @route   POST /api/v1/auth/refresh
- * @desc    刷新访问令牌
- * @access  Public（需要有效的刷新令牌）
+ * @openapi
+ * /api/v1/auth/refresh:
+ *   post:
+ *     tags:
+ *       - 认证管理
+ *     summary: 刷新访问令牌
+ *     description: 使用刷新令牌换取新的访问令牌
+ *     responses:
+ *       200:
+ *         description: 刷新成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthRefreshResponse'
+ *       401:
+ *         description: 刷新令牌无效
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/refresh', authController.refreshToken.bind(authController));
 
 /**
- * @route   POST /api/v1/auth/logout
- * @desc    用户登出
- * @access  Private（需要有效的访问令牌）
+ * @openapi
+ * /api/v1/auth/logout:
+ *   post:
+ *     tags:
+ *       - 认证管理
+ *     summary: 用户登出
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 登出成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
+ *       401:
+ *         description: 未授权
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/logout', authenticate, authController.logout.bind(authController));
 
 /**
- * @route   GET /api/v1/auth/me
- * @desc    获取当前用户信息
- * @access  Private（需要有效的访问令牌）
+ * @openapi
+ * /api/v1/auth/me:
+ *   get:
+ *     tags:
+ *       - 认证管理
+ *     summary: 获取当前用户信息
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 获取成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthMeResponse'
+ *       401:
+ *         description: 未授权
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/me', authenticate, authController.getCurrentUser.bind(authController));
 
 /**
- * @route   PUT /api/v1/auth/password
- * @desc    修改密码
- * @access  Private（需要有效的访问令牌）
+ * @openapi
+ * /api/v1/auth/password:
+ *   put:
+ *     tags:
+ *       - 认证管理
+ *     summary: 修改密码
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword]
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 修改成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
+ *       400:
+ *         description: 参数错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: 未授权
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/password', authenticate, authController.changePassword.bind(authController));
 
 /**
- * @route   POST /api/v1/auth/validate
- * @desc    验证令牌有效性
- * @access  Public
+ * @openapi
+ * /api/v1/auth/validate:
+ *   post:
+ *     tags:
+ *       - 认证管理
+ *     summary: 验证令牌有效性
+ *     responses:
+ *       200:
+ *         description: 验证完成
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthValidateResponse'
  */
 router.post('/validate', authController.validateToken.bind(authController));
 
 /**
- * @route   GET /api/v1/auth/admin/users
- * @desc    获取所有用户（管理员）
- * @access  Private（需要管理员权限）
+ * @openapi
+ * /api/v1/auth/admin/users:
+ *   get:
+ *     tags:
+ *       - 认证管理
+ *     summary: 获取所有用户（管理员）
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 获取成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
+ *       403:
+ *         description: 无权限
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/admin/users', authenticate, requireRole(UserRole.ADMIN), (_req, res) => {
-  // 这里可以调用用户控制器
   res.status(200).json({
     success: true,
     data: {
@@ -73,9 +233,19 @@ router.get('/admin/users', authenticate, requireRole(UserRole.ADMIN), (_req, res
 });
 
 /**
- * @route   GET /api/v1/auth/test/public
- * @desc    公共测试端点
- * @access  Public
+ * @openapi
+ * /api/v1/auth/test/public:
+ *   get:
+ *     tags:
+ *       - 测试接口
+ *     summary: 公共测试接口
+ *     responses:
+ *       200:
+ *         description: 调用成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
  */
 router.get('/test/public', (_req, res) => {
   res.status(200).json({
@@ -88,9 +258,27 @@ router.get('/test/public', (_req, res) => {
 });
 
 /**
- * @route   GET /api/v1/auth/test/protected
- * @desc    受保护测试端点
- * @access  Private（需要有效的访问令牌）
+ * @openapi
+ * /api/v1/auth/test/protected:
+ *   get:
+ *     tags:
+ *       - 测试接口
+ *     summary: 鉴权测试接口
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 调用成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
+ *       401:
+ *         description: 未授权
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/test/protected', authenticate, (req, res) => {
   res.status(200).json({
@@ -104,9 +292,27 @@ router.get('/test/protected', authenticate, (req, res) => {
 });
 
 /**
- * @route   GET /api/v1/auth/test/admin
- * @desc    管理员测试端点
- * @access  Private（需要管理员权限）
+ * @openapi
+ * /api/v1/auth/test/admin:
+ *   get:
+ *     tags:
+ *       - 测试接口
+ *     summary: 管理员测试接口
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 调用成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
+ *       403:
+ *         description: 无权限
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/test/admin', authenticate, requireRole(UserRole.ADMIN), (req, res) => {
   res.status(200).json({
@@ -120,9 +326,19 @@ router.get('/test/admin', authenticate, requireRole(UserRole.ADMIN), (req, res) 
 });
 
 /**
- * @route   GET /api/v1/auth/test/optional
- * @desc    可选认证测试端点
- * @access  Public（如果有令牌则显示用户信息）
+ * @openapi
+ * /api/v1/auth/test/optional:
+ *   get:
+ *     tags:
+ *       - 测试接口
+ *     summary: 可选鉴权测试接口
+ *     responses:
+ *       200:
+ *         description: 调用成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageResponse'
  */
 router.get('/test/optional', optionalAuthenticate, (_req, res) => {
   res.status(200).json({
