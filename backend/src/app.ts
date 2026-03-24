@@ -88,7 +88,7 @@ class App {
      *         description: 服务正常
      */
     // Health check endpoint
-    this.app.get('/health', (_req: Request, res: Response) => {
+    const healthHandler = (_req: Request, res: Response): void => {
       res.status(200).json({
         success: true,
         data: {
@@ -98,7 +98,10 @@ class App {
           environment: process.env.NODE_ENV,
         },
       });
-    });
+    };
+
+    this.app.get('/health', healthHandler);
+    this.app.get('/api/v1/health', healthHandler);
 
     // API version prefix
     this.app.use('/api/v1', (_req: Request, res: Response, next: NextFunction) => {
@@ -129,7 +132,7 @@ class App {
           version: '1.0.0',
           documentation: '/api/docs', // TODO: Add Swagger/OpenAPI docs
           endpoints: {
-            health: '/health',
+            health: ['/health', '/api/v1/health'],
             api: '/api/v1',
           },
         },
