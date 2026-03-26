@@ -16,6 +16,9 @@
 - Vite
 - TailwindCSS 4
 - React Router 7
+- shadcn/ui + Radix UI（基础组件库）
+- react-hook-form + zod（表单与校验）
+- sonner（Toast）
 - React Markdown + rehype-highlight（Markdown/代码高亮）
 
 ### 后端（`backend`）

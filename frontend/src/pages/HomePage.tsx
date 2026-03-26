@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';
-import { fetchArticles } from '../api/articles';
+import { fetchArticles } from '../services/articles';
 import type { Article } from '../types/article';
 import ArticleList from '../features/posts/components/ArticleList';
 

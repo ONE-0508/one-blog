@@ -6,9 +6,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { login } from '../api/auth';
-import { toApiError } from '../api/errors';
-import { useAuth } from '../contexts/useAuth';
+import { login } from '../services/auth';
+import { toApiError } from '../services/errors';
+import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import {
@@ -216,9 +216,11 @@ function LoginPage() {
                             disabled={form.formState.isSubmitting}
                             {...field}
                           />
-                          <button
+                          <Button
                             type="button"
-                            className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-text-muted hover:text-text-primary"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute inset-y-0 right-0 h-full px-3 text-text-muted hover:text-text-primary"
                             onClick={() => setShowPassword(prev => !prev)}
                             aria-label={showPassword ? '隐藏密码' : '显示密码'}
                           >
@@ -244,7 +246,7 @@ function LoginPage() {
                                 </>
                               )}
                             </svg>
-                          </button>
+                          </Button>
                         </div>
                       </FormControl>
                       <FormMessage />

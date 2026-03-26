@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { UserProfile } from '../types/auth';
-import { getCurrentUser, logout as apiLogout } from '../api/auth';
-import { getAccessToken } from '../api/authStorage';
+import { getCurrentUser, logout as apiLogout } from '../services/auth';
+import { getAccessToken } from '../services/authStorage';
 
 interface AuthContextType {
   user: UserProfile | null;

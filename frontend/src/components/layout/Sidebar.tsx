@@ -1,4 +1,4 @@
-import { useAuth } from '../../contexts/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 function Sidebar() {
   const { user } = useAuth();

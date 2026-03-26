@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';
-import { fetchArticleById } from '../api/articles';
+import { fetchArticleById } from '../services/articles';
 import type { Article } from '../types/article';
 import { formatDate } from '../utils/formatDate';
 import ReactMarkdown from 'react-markdown';

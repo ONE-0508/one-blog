@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { register as registerApi } from '../api/auth';
-import { getAccessToken } from '../api/authStorage';
-import { toApiError } from '../api/errors';
+import { register as registerApi } from '../services/auth';
+import { getAccessToken } from '../services/authStorage';
+import { toApiError } from '../services/errors';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 
@@ -185,9 +185,11 @@ function RegisterPage() {
                     disabled={isSubmitting}
                     {...register('password')}
                   />
-                  <button
+                  <Button
                     type="button"
-                    className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-text-muted hover:text-text-primary"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute inset-y-0 right-0 h-full px-3 text-text-muted hover:text-text-primary"
                     onClick={() => setShowPassword(prev => !prev)}
                     aria-label={showPassword ? '隐藏密码' : '显示密码'}
                   >
@@ -213,7 +215,7 @@ function RegisterPage() {
                         </>
                       )}
                     </svg>
-                  </button>
+                  </Button>
                 </div>
                 {errors.password?.message ? (
                   <p className="text-sm font-medium text-red-500">{errors.password.message}</p>
@@ -237,9 +239,11 @@ function RegisterPage() {
                     disabled={isSubmitting}
                     {...register('confirmPassword')}
                   />
-                  <button
+                  <Button
                     type="button"
-                    className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-text-muted hover:text-text-primary"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute inset-y-0 right-0 h-full px-3 text-text-muted hover:text-text-primary"
                     onClick={() => setShowConfirmPassword(prev => !prev)}
                     aria-label={showConfirmPassword ? '隐藏确认密码' : '显示确认密码'}
                   >
@@ -265,7 +269,7 @@ function RegisterPage() {
                         </>
                       )}
                     </svg>
-                  </button>
+                  </Button>
                 </div>
                 {errors.confirmPassword?.message ? (
                   <p className="text-sm font-medium text-red-500">

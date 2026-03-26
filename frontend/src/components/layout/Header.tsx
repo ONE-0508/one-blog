@@ -2,8 +2,10 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-import { useAuth } from '../../contexts/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { normalizeHexColor, type ThemeMode } from '../../utils/theme';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 const MotionButton = motion.button;
 
@@ -103,9 +105,11 @@ function Header({
 
         <div className="flex items-center gap-2">
           <div className="relative" ref={themePanelRef}>
-            <button
+            <Button
               type="button"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border-subtle bg-bg-elevated-soft text-sm text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-full"
               aria-label="主题设置"
               onClick={() => {
                 setIsThemePanelOpen(prev => !prev);
@@ -113,7 +117,7 @@ function Header({
               }}
             >
               🎨
-            </button>
+            </Button>
 
             {isThemePanelOpen && (
               <div className="absolute right-0 z-[60] mt-2 w-72 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
@@ -127,37 +131,34 @@ function Header({
                   </div>
 
                   <div className="flex space-x-2 rounded-full border border-border-subtle bg-bg-elevated-soft p-1">
-                    <button
+                    <Button
                       type="button"
+                      variant={mode === 'light' && !followSystem ? 'default' : 'ghost'}
+                      size="sm"
                       disabled={followSystem}
                       onClick={() => onSetThemeMode('light')}
-                      className={`flex-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        mode === 'light' && !followSystem
-                          ? 'bg-accent-primary text-accent-contrast'
-                          : 'text-text-secondary hover:text-text-primary'
-                      } ${followSystem ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className="flex-1 rounded-full"
                     >
                       浅色
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant={mode === 'dark' && !followSystem ? 'default' : 'ghost'}
+                      size="sm"
                       disabled={followSystem}
                       onClick={() => onSetThemeMode('dark')}
-                      className={`flex-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        mode === 'dark' && !followSystem
-                          ? 'bg-accent-primary text-accent-contrast'
-                          : 'text-text-secondary hover:text-text-primary'
-                      } ${followSystem ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className="flex-1 rounded-full"
                     >
                       深色
-                    </button>
+                    </Button>
                   </div>
 
                   <label className="flex items-center gap-2 text-xs text-text-secondary">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={followSystem}
                       onChange={event => onSetFollowSystem(event.target.checked)}
+                      className="h-4 w-4 rounded border-border-subtle p-0"
                     />
                     跟随系统明暗模式
                   </label>
@@ -165,7 +166,7 @@ function Header({
                   <div className="space-y-2">
                     <label className="block text-xs text-text-muted">主题主色（任意色值）</label>
                     <div className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="color"
                         value={themeColor}
                         onChange={event => {
@@ -173,9 +174,9 @@ function Header({
                           onSetThemeColor(value);
                           setCustomColorInput(value);
                         }}
-                        className="h-8 w-10 cursor-pointer rounded border border-border-subtle bg-bg-elevated-soft"
+                        className="h-8 w-10 cursor-pointer rounded p-0"
                       />
-                      <input
+                      <Input
                         value={customColorInput}
                         onChange={event => setCustomColorInput(event.target.value)}
                         onBlur={() => {
@@ -184,7 +185,7 @@ function Header({
                           setCustomColorInput(value);
                         }}
                         placeholder="#3B82F6"
-                        className="w-full rounded-md border border-border-subtle bg-bg-elevated-soft px-2 py-1 text-xs text-text-primary"
+                        className="text-xs"
                       />
                     </div>
                   </div>
@@ -219,13 +220,15 @@ function Header({
                   <p className="text-xs text-text-secondary">{user?.email || '暂未开放'}</p>
                 </div>
                 <div className="my-3 h-px bg-divider-subtle" />
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={handleLogout}
-                  className="w-full rounded-lg border border-border-subtle bg-bg-elevated-soft px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-accent-primary/60 hover:text-text-primary"
+                  className="w-full"
                 >
                   退出登录
-                </button>
+                </Button>
               </div>
             )}
           </div>

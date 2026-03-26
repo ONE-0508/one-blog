@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ArticleList from '../features/posts/components/ArticleList';
 import ArticlePagination from '../features/posts/components/ArticlePagination';
-import { fetchArticles } from '../api/articles';
+import { fetchArticles } from '../services/articles';
 import type { Article } from '../types/article';
 
 function ArchivePage() {

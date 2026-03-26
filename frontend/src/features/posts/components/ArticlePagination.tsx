@@ -1,3 +1,5 @@
+import { Button } from '../../../components/ui/button';
+
 interface ArticlePaginationProps {
   page: number;
   pageSize: number;
@@ -18,22 +20,26 @@ function ArticlePagination({ page, pageSize, total, onPageChange }: ArticlePagin
         第 {page} / {totalPages} 页
       </span>
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
-          className="rounded-full border border-border-subtle px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          variant="outline"
+          size="sm"
+          className="rounded-full"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
         >
           上一页
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="rounded-full border border-border-subtle px-3 py-1 text-xs text-text-secondary hover:border-accent-primary/60 hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          variant="outline"
+          size="sm"
+          className="rounded-full"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
         >
           下一页
-        </button>
+        </Button>
       </div>
     </div>
   );
