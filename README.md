@@ -67,7 +67,7 @@
 
 ## 4. 本地开发
 
-## 4.1 环境要求
+### 4.1 环境要求
 
 - Node.js 18+
 - pnpm（前端与管理端推荐）
@@ -121,7 +121,131 @@ cd admin && pnpm dev
 
 ---
 
-## 5. 质量检查
+## 5. 部署说明（前端 / 后端 / 管理端）
+
+以下为单机部署的推荐方式：`Nginx + Node 进程（pm2/systemd）`。
+
+### 5.1 服务器目录建议
+
+```bash
+/opt/one-blog/
+├─ frontend/        # 前台项目
+├─ backend/         # 后端项目
+└─ admin/           # 管理端项目
+```
+
+### 5.2 后端部署（`backend`）
+
+1. 安装依赖并构建
+
+```bash
+cd /opt/one-blog/backend
+npm install
+npm run build
+```
+
+2. 配置环境变量（生产）
+
+- 推荐使用 `backend/.env.production`
+- 至少包含：`NODE_ENV`、`PORT`、`JWT_SECRET`、`DB_*`、`ALLOWED_ORIGINS`
+
+3. 启动服务（示例：pm2）
+
+```bash
+cd /opt/one-blog/backend
+NODE_ENV=production pm2 start dist/server.js --name one-blog-backend
+pm2 save
+```
+
+### 5.3 前端部署（`frontend`）
+
+1. 安装依赖并打包
+
+```bash
+cd /opt/one-blog/frontend
+pnpm install
+pnpm build
+```
+
+2. 生产环境 API 地址
+
+- 使用相对路径：`VITE_API_BASE_URL=/api/v1`
+- 可写在 `frontend/.env.production`
+
+3. 构建产物目录
+
+- `frontend/dist`
+
+### 5.4 管理端部署（`admin`）
+
+1. 安装依赖并打包
+
+```bash
+cd /opt/one-blog/admin
+pnpm install
+pnpm build
+```
+
+2. 构建产物目录
+
+- `admin/dist`
+
+### 5.5 Nginx 反向代理示例
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    # 前台
+    root /opt/one-blog/frontend/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 管理端（路径前缀）
+    location /admin/ {
+        alias /opt/one-blog/admin/dist/;
+        try_files $uri $uri/ /admin/index.html;
+    }
+
+    # 后端 API
+    location /api/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+更新配置后执行：
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### 5.6 部署后验证
+
+```bash
+# 前台
+curl -I http://<服务器IP或域名>/
+
+# 后端健康检查
+curl -I http://<服务器IP或域名>/api/v1/health
+
+# 管理端
+curl -I http://<服务器IP或域名>/admin/
+```
+
+---
+
+## 6. 质量检查
 
 ### 根目录统一检查
 
@@ -147,7 +271,7 @@ cd admin && pnpm eslint
 
 ---
 
-## 6. 关键说明
+## 7. 关键说明
 
 - `frontend` 与 `backend` 已纳入根 `workspaces`
 - `admin` 为独立子项目（当前未纳入根 workspaces）
@@ -155,7 +279,7 @@ cd admin && pnpm eslint
 
 ---
 
-## 7. 相关文档
+## 8. 相关文档
 
 - PRD：`个人博客产品需求文档-PRD.md`
 - 前端架构：`frontend/docs/前端架构设计文档.md`
@@ -164,7 +288,7 @@ cd admin && pnpm eslint
 
 ---
 
-## 8. 后续建议
+## 9. 后续建议
 
 - 统一根目录/子项目包管理器（当前 npm + pnpm 混用）
 - 补充 CI（lint + type-check + build）
