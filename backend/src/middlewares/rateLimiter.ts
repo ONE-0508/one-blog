@@ -1,6 +1,7 @@
 import { rateLimit, ipKeyGenerator } from 'express-rate-limit';
 import type { Request } from 'express';
 import logger from '@/config/logger';
+import { ErrorCodes } from '@/utils/AppError';
 
 /**
  * Rate limiter configuration
@@ -11,8 +12,9 @@ export const apiLimiter = rateLimit({
   message: {
     success: false,
     error: {
-      message: 'Too many requests, please try again later.',
-      code: 429,
+      message: '请求过于频繁，请稍后再试',
+      code: ErrorCodes.BAD_REQUEST,
+      httpStatus: 429,
     },
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -40,10 +42,12 @@ export const authLimiter = rateLimit({
   message: {
     success: false,
     error: {
-      message: 'Too many authentication attempts, please try again later.',
-      code: 429,
+      message: '登录/注册尝试过于频繁，请稍后再试',
+      code: ErrorCodes.BAD_REQUEST,
+      httpStatus: 429,
     },
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'development',
 });

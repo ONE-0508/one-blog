@@ -74,7 +74,7 @@ function Header({
   }, []);
 
   return (
-    <header className="border-b border-border-subtle bg-bg-elevated/80 backdrop-blur md:sticky md:top-0 md:z-20 transition-colors duration-300 ease-out">
+    <header className="sticky top-0 z-50 border-b border-border-subtle bg-bg-elevated/80 backdrop-blur transition-colors duration-300 ease-out">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-linear-to-br from-accent-primary to-accent-underline-to shadow-subtle" />
@@ -116,7 +116,7 @@ function Header({
             </button>
 
             {isThemePanelOpen && (
-              <div className="absolute right-0 mt-2 w-72 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
+              <div className="absolute right-0 z-[60] mt-2 w-72 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold tracking-wide text-text-muted">主题控制</p>
@@ -210,7 +210,7 @@ function Header({
             </MotionButton>
 
             {isMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
+              <div className="absolute right-0 z-[60] mt-2 w-56 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-soft">
                 <div className="space-y-1">
                   <p className="text-xs text-text-muted">当前用户</p>
                   <p className="text-sm font-semibold text-text-primary">

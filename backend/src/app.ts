@@ -6,6 +6,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import { apiLimiter } from '@/middlewares/rateLimiter';
 import { errorHandler, notFoundHandler } from '@/middlewares/errorHandler';
+import { AppError, ErrorCodes } from '@/utils/AppError';
 import logger from '@/config/logger';
 import { testDatabaseConnection, syncDatabase } from '@/config/database';
 import authRoutes from '@/routes/auth.routes';
@@ -31,7 +32,10 @@ class App {
     this.app.use(helmet());
 
     // CORS configuration
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+    const allowedOrigins =
+      process.env.ALLOWED_ORIGINS?.split(',')
+        .map(origin => origin.trim())
+        .filter(Boolean) || [];
     this.app.use(
       cors({
         origin: (origin, callback) => {
@@ -40,11 +44,19 @@ class App {
             return callback(null, true);
           }
 
-          if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-            logger.warn(msg);
-            return callback(new Error(msg), false);
+          if (allowedOrigins.length === 0) {
+            logger.warn('ALLOWED_ORIGINS 未配置，当前允许所有来源访问');
+            return callback(null, true);
           }
+
+          if (!allowedOrigins.includes(origin)) {
+            logger.warn(`CORS blocked origin: ${origin}`);
+            return callback(
+              new AppError('当前来源不在允许访问列表中', 403, ErrorCodes.CORS_ORIGIN_DENIED),
+              false
+            );
+          }
+
           return callback(null, true);
         },
         credentials: true,

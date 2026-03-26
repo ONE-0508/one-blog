@@ -7,6 +7,27 @@ function getStatus(error: AxiosError): number | undefined {
   return typeof status === 'number' ? status : undefined;
 }
 
+function extractResponseMessage(data: unknown): string | null {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const maybeRootMessage = (data as { message?: unknown }).message;
+  if (typeof maybeRootMessage === 'string' && maybeRootMessage.trim()) {
+    return maybeRootMessage;
+  }
+
+  const maybeError = (data as { error?: unknown }).error;
+  if (maybeError && typeof maybeError === 'object') {
+    const maybeNestedMessage = (maybeError as { message?: unknown }).message;
+    if (typeof maybeNestedMessage === 'string' && maybeNestedMessage.trim()) {
+      return maybeNestedMessage;
+    }
+  }
+
+  return null;
+}
+
 export function toApiError(error: unknown): ApiError {
   if (!axios.isAxiosError(error)) {
     return {
@@ -15,14 +36,7 @@ export function toApiError(error: unknown): ApiError {
   }
 
   const status = getStatus(error);
-  const message =
-    (typeof error.response?.data === 'object' &&
-      error.response?.data !== null &&
-      'message' in error.response.data &&
-      typeof (error.response.data as { message?: unknown }).message === 'string' &&
-      (error.response.data as { message: string }).message) ||
-    error.message ||
-    '请求失败';
+  const message = extractResponseMessage(error.response?.data) || error.message || '请求失败';
 
   return {
     message,

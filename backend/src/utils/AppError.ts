@@ -1,89 +1,84 @@
 /**
+ * 应用错误码
+ */
+export const ErrorCodes = {
+  BAD_REQUEST: 'BAD_REQUEST',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+  CORS_ORIGIN_DENIED: 'CORS_ORIGIN_DENIED',
+} as const;
+
+export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
+
+/**
  * Custom application error class
  */
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;
   public readonly details?: unknown;
+  public readonly errorCode: ErrorCode;
 
   constructor(
     message: string,
     statusCode: number = 500,
+    errorCode: ErrorCode = ErrorCodes.INTERNAL_SERVER_ERROR,
     isOperational: boolean = true,
     details?: unknown
   ) {
     super(message);
     this.statusCode = statusCode;
+    this.errorCode = errorCode;
     this.isOperational = isOperational;
     this.details = details;
 
-    // Ensure proper prototype chain
     Object.setPrototypeOf(this, AppError.prototype);
-
-    // Capture stack trace
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-/**
- * Bad Request Error (400)
- */
 export class BadRequestError extends AppError {
-  constructor(message: string = 'Bad Request', details?: unknown) {
-    super(message, 400, true, details);
+  constructor(message: string = '请求参数错误', details?: unknown) {
+    super(message, 400, ErrorCodes.BAD_REQUEST, true, details);
   }
 }
 
-/**
- * Unauthorized Error (401)
- */
 export class UnauthorizedError extends AppError {
-  constructor(message: string = 'Unauthorized') {
-    super(message, 401);
+  constructor(message: string = '未登录或登录状态已失效') {
+    super(message, 401, ErrorCodes.UNAUTHORIZED);
   }
 }
 
-/**
- * Forbidden Error (403)
- */
 export class ForbiddenError extends AppError {
-  constructor(message: string = 'Forbidden') {
-    super(message, 403);
+  constructor(message: string = '没有访问权限') {
+    super(message, 403, ErrorCodes.FORBIDDEN);
   }
 }
 
-/**
- * Not Found Error (404)
- */
 export class NotFoundError extends AppError {
-  constructor(message: string = 'Resource not found') {
-    super(message, 404);
+  constructor(message: string = '资源不存在') {
+    super(message, 404, ErrorCodes.NOT_FOUND);
   }
 }
 
-/**
- * Conflict Error (409)
- */
 export class ConflictError extends AppError {
-  constructor(message: string = 'Conflict') {
-    super(message, 409);
+  constructor(message: string = '资源冲突') {
+    super(message, 409, ErrorCodes.CONFLICT);
   }
 }
 
-/**
- * Validation Error (422)
- */
 export class ValidationError extends AppError {
-  constructor(message: string = 'Validation failed', details?: unknown) {
-    super(message, 422, true, details);
+  constructor(message: string = '数据校验失败', details?: unknown) {
+    super(message, 422, ErrorCodes.VALIDATION_FAILED, true, details);
   }
 }
 
-/**
- * Internal Server Error (500)
- */
 export class InternalServerError extends AppError {
-  constructor(message: string = 'Internal Server Error') {
-    super(message, 500, false);
+  constructor(message: string = '服务器内部错误') {
+    super(message, 500, ErrorCodes.INTERNAL_SERVER_ERROR, false);
   }
 }

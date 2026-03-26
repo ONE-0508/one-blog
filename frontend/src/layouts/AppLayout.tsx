@@ -149,7 +149,9 @@ function AppLayout({ children }: AppLayoutProps) {
         />
       )}
 
-      <main className={isAuthRoute ? 'flex flex-1 items-center' : 'flex-1'}>
+      <main
+        className={isAuthRoute ? 'relative z-0 flex flex-1 items-center' : 'relative z-0 flex-1'}
+      >
         <div
           className={
             isAuthRoute

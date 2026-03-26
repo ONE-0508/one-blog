@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import 'dotenv-flow/config';
 import App from '@/app';
 import logger from '@/config/logger';
 

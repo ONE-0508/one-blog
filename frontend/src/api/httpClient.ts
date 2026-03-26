@@ -44,11 +44,18 @@ httpClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 httpClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
     const status: number | undefined = error.response?.status;
+    const requestUrl = originalRequest?.url || '';
+    const isAuthEndpoint =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/register') ||
+      requestUrl.includes('/auth/refresh');
 
-    // 如果是401错误且不是刷新token的请求，尝试刷新token
-    if (status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
+    // 如果是401错误且不是认证相关请求，尝试刷新token
+    if (status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         // 如果正在刷新，将请求加入队列
         return new Promise((resolve, reject) => {
@@ -70,11 +77,14 @@ httpClient.interceptors.response.use(
       // 检查是否有refresh token
       const refreshTokenValue = getRefreshToken();
       if (!refreshTokenValue) {
+        const authError = new Error('No refresh token available');
+        processQueue(authError, null);
+        isRefreshing = false;
         clearAccessToken();
         if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
           window.location.assign('/login');
         }
-        return Promise.reject(new Error(error.message || 'Authentication failed'));
+        return Promise.reject(error);
       }
 
       try {
@@ -100,9 +110,7 @@ httpClient.interceptors.response.use(
         if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
           window.location.assign('/login');
         }
-        return Promise.reject(
-          new Error(refreshError instanceof Error ? refreshError.message : 'Token refresh failed')
-        );
+        return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }
@@ -116,6 +124,6 @@ httpClient.interceptors.response.use(
       }
     }
 
-    return Promise.reject(new Error(error.message || 'Request failed'));
+    return Promise.reject(error);
   }
 );
