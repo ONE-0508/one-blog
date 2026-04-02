@@ -1,0 +1,11 @@
+services:
+blog-backend:
+build:
+context: ./backend
+dockerfile: Dockerfile
+container_name: blog-backend
+restart: always
+env_file:
+- ./backend/.env.production
+ports:
+- "3001:3001"
