@@ -22,6 +22,7 @@ const navItems = [
   { to: '/', label: '首页' },
   { to: '/notes', label: '笔记' },
   { to: '/works', label: '作品' },
+  { to: '/categories', label: '分类' },
   { to: '/archive', label: '全部文章' },
   { to: '/about', label: '关于' },
   { to: '/guestbook', label: '留言板' },

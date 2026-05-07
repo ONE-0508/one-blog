@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
+import { DataTypes } from 'sequelize';
 import type { Dialect } from 'sequelize';
 import logger from './logger';
 
@@ -142,8 +143,9 @@ const sequelize = createSequelizeInstance();
 
 // 手动添加模型
 import { User } from '@/models/user.model';
+import { Category } from '@/models/category.model';
 import { Article } from '@/models/article.model';
-sequelize.addModels([User, Article]);
+sequelize.addModels([User, Category, Article]);
 
 /**
  * 测试数据库连接
@@ -176,12 +178,50 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
  */
 export const syncDatabase = async (force: boolean = false): Promise<void> => {
   try {
-    await sequelize.sync({ force });
+    if (force) {
+      await sequelize.sync({ force });
+      logger.info('Database synchronized successfully.');
+      return;
+    }
+
+    await User.sync();
+    await Category.sync();
+    await ensureArticleCategoryColumn();
+    await Article.sync();
     logger.info('Database synchronized successfully.');
   } catch (error) {
     logger.error('Error synchronizing database:', error);
     throw error;
   }
+};
+
+const ensureArticleCategoryColumn = async (): Promise<void> => {
+  const queryInterface = sequelize.getQueryInterface();
+  let articlesTable: Awaited<ReturnType<typeof queryInterface.describeTable>>;
+
+  try {
+    articlesTable = await queryInterface.describeTable('articles');
+  } catch {
+    await Article.sync();
+    return;
+  }
+
+  if (articlesTable.category_id) {
+    return;
+  }
+
+  await queryInterface.addColumn('articles', 'category_id', {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'categories',
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  });
+
+  logger.info('Added missing articles.category_id column.');
 };
 
 /**

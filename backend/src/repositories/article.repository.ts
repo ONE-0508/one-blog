@@ -1,9 +1,11 @@
 import { Article } from '@/models/article.model';
+import { Category } from '@/models/category.model';
 import { User } from '@/models/user.model';
 
 export interface ArticleListOptions {
   page: number;
   pageSize: number;
+  categoryId?: string;
 }
 
 export interface ArticleListResult {
@@ -17,6 +19,7 @@ class ArticleRepository {
     content: string;
     tags: string[];
     authorId: string;
+    categoryId?: string | null;
   }): Promise<Article> {
     return Article.create(data);
   }
@@ -38,18 +41,23 @@ class ArticleRepository {
               model: User,
               attributes: ['id', 'username', 'displayName', 'avatarUrl'],
             },
+            {
+              model: Category,
+              attributes: ['id', 'name', 'slug', 'description', 'sort', 'status'],
+            },
           ]
         : [],
     });
   }
 
   async findAndCount(options: ArticleListOptions): Promise<ArticleListResult> {
-    const { page, pageSize } = options;
+    const { page, pageSize, categoryId } = options;
     const offset = (page - 1) * pageSize;
 
     const result = await Article.findAndCountAll({
       where: {
         isDeleted: false,
+        ...(categoryId ? { categoryId } : {}),
       },
       order: [['createdAt', 'DESC']],
       limit: pageSize,
@@ -58,6 +66,10 @@ class ArticleRepository {
         {
           model: User,
           attributes: ['id', 'username', 'displayName', 'avatarUrl'],
+        },
+        {
+          model: Category,
+          attributes: ['id', 'name', 'slug', 'description', 'sort', 'status'],
         },
       ],
     });

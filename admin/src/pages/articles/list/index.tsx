@@ -7,6 +7,12 @@ interface ArticleItem {
   id: string;
   title: string;
   tags: string[];
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
+  categoryId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -71,15 +77,23 @@ export default function ArticleList() {
       dataIndex: 'title',
     },
     {
+      title: '分类',
+      dataIndex: 'category',
+      render: (category: ArticleItem['category']) => category?.name || '未分类',
+    },
+    {
       title: '标签',
       dataIndex: 'tags',
-      render: (tags: string[]) => (
-        <Space size={6} wrap>
-          {tags?.length
-            ? tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
-            : '暂无'}
-        </Space>
-      ),
+      render: (tags: string[]) =>
+        tags?.length ? (
+          <Space size={6} wrap>
+            {tags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </Space>
+        ) : (
+          '暂无'
+        ),
     },
     {
       title: '更新时间',

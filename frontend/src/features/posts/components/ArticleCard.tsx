@@ -17,6 +17,14 @@ function ArticleCard({ article }: ArticleCardProps) {
         <span>{formatDate(article.createdAt)}</span>
         <span>·</span>
         <span>阅读 {article.viewCount}</span>
+        {article.category && (
+          <>
+            <span>·</span>
+            <Link to={`/category/${article.category.slug}`} className="hover:text-accent-primary">
+              {article.category.name}
+            </Link>
+          </>
+        )}
       </div>
       <h3 className="mt-2 text-base font-semibold text-text-primary">
         <Link to={`/posts/${article.id}`} className="hover:text-accent-primary">

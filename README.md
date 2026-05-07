@@ -116,7 +116,7 @@ cd admin && pnpm dev
 常见访问地址（以终端实际输出为准）：
 
 - 前端：`http://localhost:5173`
-- 管理端：`http://localhost:3000` 或 `http://localhost:5174`
+- 管理端：`http://localhost:5174`
 - 后端：`http://localhost:3001`（示例）
 
 ---

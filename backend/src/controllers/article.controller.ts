@@ -53,10 +53,11 @@ export class ArticleController {
 
   async createArticle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { title, content, tags } = req.body as {
+      const { title, content, tags, categoryId } = req.body as {
         title?: string;
         content?: string;
         tags?: string[];
+        categoryId?: string | null;
       };
 
       if (!Array.isArray(tags)) {
@@ -73,6 +74,7 @@ export class ArticleController {
         content: content ?? '',
         tags,
         authorId,
+        categoryId,
       });
 
       res.status(201).json({
@@ -93,17 +95,23 @@ export class ArticleController {
         throw new BadRequestError('Article id is required');
       }
 
-      const { title, content, tags } = req.body as {
+      const { title, content, tags, categoryId } = req.body as {
         title?: string;
         content?: string;
         tags?: string[];
+        categoryId?: string | null;
       };
 
       if (tags !== undefined && !Array.isArray(tags)) {
         throw new BadRequestError('Tags must be an array');
       }
 
-      if (title === undefined && content === undefined && tags === undefined) {
+      if (
+        title === undefined &&
+        content === undefined &&
+        tags === undefined &&
+        categoryId === undefined
+      ) {
         throw new BadRequestError('No fields to update');
       }
 
@@ -111,6 +119,7 @@ export class ArticleController {
         title,
         content,
         tags,
+        categoryId,
       });
 
       res.status(200).json({

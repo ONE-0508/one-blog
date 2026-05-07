@@ -22,6 +22,7 @@
     "pre-commit": "lint-staged",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && pnpm dev",
+    "dev:admin": "cd admin && npm run dev",
     "dev": "node scripts/dev.js",
     "dev:simple": "concurrently --kill-others-on-fail --names \"BACKEND,FRONTEND\" --prefix \"[{name}]\" --prefix-colors \"bgBlue.bold,bgMagenta.bold\" \"npm run dev:backend\" \"npm run dev:frontend\""
   },

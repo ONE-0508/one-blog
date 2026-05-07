@@ -1,4 +1,5 @@
 import { articleRepository } from '@/repositories/article.repository';
+import { categoryService } from '@/services/category.service';
 import { BadRequestError, NotFoundError } from '@/utils/AppError';
 import type { Article } from '@/models/article.model';
 
@@ -7,12 +8,14 @@ export interface CreateArticleInput {
   content: string;
   tags: string[];
   authorId: string;
+  categoryId?: string | null;
 }
 
 export interface UpdateArticleInput {
   title?: string;
   content?: string;
   tags?: string[];
+  categoryId?: string | null;
 }
 
 export interface ArticleListResponse {
@@ -26,12 +29,14 @@ class ArticleService {
   async createArticle(input: CreateArticleInput): Promise<Article> {
     this.validateTitle(input.title);
     this.validateContent(input.content);
+    const categoryId = await this.resolveCategoryId(input.categoryId);
 
     return articleRepository.create({
       title: input.title,
       content: input.content,
       tags: input.tags,
       authorId: input.authorId,
+      categoryId,
     });
   }
 
@@ -48,7 +53,12 @@ class ArticleService {
       this.validateContent(input.content);
     }
 
-    const updated = await articleRepository.updateById(id, input as Partial<Article>);
+    const payload: Partial<Article> = { ...input } as Partial<Article>;
+    if (input.categoryId !== undefined) {
+      payload.categoryId = await this.resolveCategoryId(input.categoryId);
+    }
+
+    const updated = await articleRepository.updateById(id, payload);
 
     if (!updated) {
       throw new NotFoundError('Article not found');
@@ -110,6 +120,16 @@ class ArticleService {
     if (!content || content.trim().length === 0) {
       throw new BadRequestError('Content is required');
     }
+  }
+
+  private async resolveCategoryId(categoryId?: string | null): Promise<string> {
+    if (!categoryId) {
+      const fallback = await categoryService.ensureDefaultCategory();
+      return fallback.id;
+    }
+
+    const category = await categoryService.ensureActiveCategory(categoryId);
+    return category.id;
   }
 }
 

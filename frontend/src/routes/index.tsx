@@ -11,6 +11,8 @@ import WorksPage from '../pages/WorksPage';
 import ArchivePage from '../pages/ArchivePage';
 import AboutPage from '../pages/AboutPage';
 import GuestbookPage from '../pages/GuestbookPage';
+import CategoriesPage from '../pages/CategoriesPage';
+import CategoryDetailPage from '../pages/CategoryDetailPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -71,6 +73,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ArchivePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'categories',
+        element: (
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'category/:slug',
+        element: (
+          <ProtectedRoute>
+            <CategoryDetailPage />
           </ProtectedRoute>
         ),
       },

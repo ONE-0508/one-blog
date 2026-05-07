@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import MainContent from '../components/layout/MainContent';
 import Sidebar from '../components/layout/Sidebar';
 import { fetchArticleById } from '../services/articles';
@@ -82,6 +82,17 @@ function PostDetailPage() {
                 <span>{formatDate(article.createdAt)}</span>
                 <span>·</span>
                 <span>阅读 {article.viewCount}</span>
+                {article.category && (
+                  <>
+                    <span>·</span>
+                    <Link
+                      to={`/category/${article.category.slug}`}
+                      className="hover:text-accent-primary"
+                    >
+                      {article.category.name}
+                    </Link>
+                  </>
+                )}
               </div>
             </header>
 

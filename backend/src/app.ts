@@ -11,6 +11,7 @@ import logger from '@/config/logger';
 import { testDatabaseConnection, syncDatabase } from '@/config/database';
 import authRoutes from '@/routes/auth.routes';
 import articleRoutes from '@/routes/article.routes';
+import categoryRoutes from '@/routes/category.routes';
 import { swaggerSpec } from '@/config/swagger';
 import swaggerUi from 'swagger-ui-express';
 
@@ -32,10 +33,7 @@ class App {
     this.app.use(helmet());
 
     // CORS configuration
-    const allowedOrigins =
-      process.env.ALLOWED_ORIGINS?.split(',')
-        .map(origin => origin.trim())
-        .filter(Boolean) || [];
+    const allowedOrigins = this.resolveAllowedOrigins();
     this.app.use(
       cors({
         origin: (origin, callback) => {
@@ -84,6 +82,38 @@ class App {
     this.app.use(apiLimiter);
   }
 
+  private resolveAllowedOrigins(): string[] {
+    const rawOrigins =
+      process.env.ALLOWED_ORIGINS?.split(',')
+        .map(origin => origin.trim())
+        .filter(Boolean) || [];
+
+    const expandedOrigins = new Set<string>();
+
+    rawOrigins.forEach(origin => {
+      expandedOrigins.add(origin);
+
+      try {
+        const parsed = new URL(origin);
+        if (parsed.hostname === 'localhost') {
+          expandedOrigins.add(
+            `${parsed.protocol}//127.0.0.1${parsed.port ? `:${parsed.port}` : ''}`
+          );
+          expandedOrigins.add(`${parsed.protocol}//[::1]${parsed.port ? `:${parsed.port}` : ''}`);
+        }
+        if (parsed.hostname === '127.0.0.1' || parsed.hostname === '[::1]') {
+          expandedOrigins.add(
+            `${parsed.protocol}//localhost${parsed.port ? `:${parsed.port}` : ''}`
+          );
+        }
+      } catch {
+        // Ignore invalid origins and keep the raw value only.
+      }
+    });
+
+    return Array.from(expandedOrigins);
+  }
+
   /**
    * Initialize routes
    */
@@ -125,6 +155,7 @@ class App {
     // API routes
     this.app.use('/api/v1/auth', authRoutes);
     this.app.use('/api/v1/articles', articleRoutes);
+    this.app.use('/api/v1/categories', categoryRoutes);
     // this.app.use('/api/v1/notes', noteRoutes);
     // this.app.use('/api/v1/comments', commentRoutes);
     // this.app.use('/api/v1/projects', projectRoutes);

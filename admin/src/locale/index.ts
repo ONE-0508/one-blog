@@ -2,6 +2,7 @@ const i18n = {
   'en-US': {
     'menu.articles': 'Articles',
     'menu.articles.list': 'Article List',
+    'menu.articles.categories': 'Category Management',
     'menu.articles.editor': 'New Article',
     'menu.user.switchRoles': 'Switch Roles',
     'menu.user.role.admin': 'Admin',
@@ -39,6 +40,7 @@ const i18n = {
   'zh-CN': {
     'menu.articles': '文章管理',
     'menu.articles.list': '文章列表',
+    'menu.articles.categories': '分类管理',
     'menu.articles.editor': '新建文章',
     'menu.user.switchRoles': '切换角色',
     'menu.user.role.admin': '管理员',

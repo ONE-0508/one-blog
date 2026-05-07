@@ -24,7 +24,7 @@ function Index() {
   const [theme, setTheme] = useStorage('arco-theme', 'light');
 
   axios.defaults.baseURL =
-    import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
+    import.meta.env.VITE_API_BASE_URL || '/api/v1';
   axios.interceptors.request.use((config) => {
     const token = getAccessToken();
     if (token) {
@@ -35,6 +35,29 @@ function Index() {
     }
     return config;
   });
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const status = error?.response?.status;
+      const requestUrl = error?.config?.url || '';
+      const isLoginPage = window.location.pathname.replace(/\//g, '') === 'login';
+      const isAuthMeRequest = requestUrl.includes('/auth/me');
+      const isLoginRequest = requestUrl.includes('/auth/login');
+
+      if (status === 401 && !isAuthMeRequest && !isLoginRequest) {
+        clearAuthStorage();
+        store.dispatch({
+          type: 'update-userInfo',
+          payload: { userInfo: null, userLoading: false },
+        });
+        if (!isLoginPage) {
+          window.location.href = '/login';
+        }
+      }
+
+      return Promise.reject(error);
+    }
+  );
 
   function getArcoLocale() {
     switch (lang) {

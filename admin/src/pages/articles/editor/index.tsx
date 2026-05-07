@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Card, Form, Input, Message, Space } from '@arco-design/web-react';
+import { Button, Card, Form, Input, Message, Select, Space } from '@arco-design/web-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import qs from 'query-string';
@@ -8,13 +8,36 @@ import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 
+interface CategoryOption {
+  label: string;
+  value: string;
+}
+
 export default function ArticleEditor() {
   const history = useHistory();
   const location = useLocation();
   const query = useMemo(() => qs.parse(location.search), [location.search]);
   const articleId = typeof query.id === 'string' ? query.id : undefined;
   const [loading, setLoading] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    axios
+      .get('/categories/options')
+      .then((res) => {
+        const categories = res.data?.data?.categories || [];
+        setCategoryOptions(
+          categories.map((category) => ({
+            label: category.name,
+            value: category.id,
+          }))
+        );
+      })
+      .catch(() => {
+        Message.error('分类列表加载失败');
+      });
+  }, []);
 
   useEffect(() => {
     if (!articleId) return;
@@ -26,6 +49,7 @@ export default function ArticleEditor() {
         if (article) {
           form.setFieldsValue({
             title: article.title,
+            categoryId: article.categoryId || article.category?.id,
             content: article.content,
             tags: (article.tags || []).join(', '),
           });
@@ -44,6 +68,7 @@ export default function ArticleEditor() {
       const values = await form.validate();
       const payload = {
         title: values.title,
+        categoryId: values.categoryId,
         content: values.content,
         tags: values.tags
           ? values.tags
@@ -83,6 +108,13 @@ export default function ArticleEditor() {
         </Form.Item>
         <Form.Item label="标签" field="tags">
           <Input placeholder="多个标签用英文逗号分隔" />
+        </Form.Item>
+        <Form.Item label="分类" field="categoryId">
+          <Select
+            allowClear
+            placeholder="请选择分类，留空将归入未分类"
+            options={categoryOptions}
+          />
         </Form.Item>
         <Form.Item
           label="内容"

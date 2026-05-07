@@ -8,57 +8,65 @@ import {
   AllowNull,
   CreatedAt,
   UpdatedAt,
-  ForeignKey,
-  BelongsTo,
+  Unique,
+  HasMany,
 } from 'sequelize-typescript';
-import { User } from '@/models/user.model';
-import { Category } from '@/models/category.model';
+import { Article } from '@/models/article.model';
+
+export enum CategoryStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}
 
 @Table({
-  tableName: 'articles',
+  tableName: 'categories',
   timestamps: true,
   underscored: true,
   indexes: [
     {
-      fields: ['author_id'],
+      unique: true,
+      fields: ['slug'],
     },
     {
-      fields: ['category_id'],
+      fields: ['status'],
     },
     {
-      fields: ['created_at'],
+      fields: ['sort'],
     },
     {
       fields: ['is_deleted'],
     },
   ],
 })
-export class Article extends Model {
+export class Category extends Model {
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   declare id: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING(200))
-  declare title: string;
+  @Column(DataType.STRING(30))
+  declare name: string;
 
+  @Unique
   @AllowNull(false)
+  @Column(DataType.STRING(80))
+  declare slug: string;
+
   @Column(DataType.TEXT)
-  declare content: string;
-
-  @Default([])
-  @AllowNull(false)
-  @Column(DataType.JSON)
-  declare tags: string[];
+  declare description?: string | null;
 
   @Default(0)
   @AllowNull(false)
+  @Column(DataType.INTEGER)
+  declare sort: number;
+
+  @Default(CategoryStatus.ACTIVE)
+  @AllowNull(false)
   @Column({
-    type: DataType.INTEGER,
-    field: 'view_count',
+    type: DataType.ENUM(...Object.values(CategoryStatus)),
   })
-  declare viewCount: number;
+  declare status: CategoryStatus;
 
   @Default(false)
   @AllowNull(false)
@@ -74,27 +82,8 @@ export class Article extends Model {
   })
   declare deletedAt?: Date | null;
 
-  @ForeignKey(() => User)
-  @AllowNull(false)
-  @Column({
-    type: DataType.UUID,
-    field: 'author_id',
-  })
-  declare authorId: string;
-
-  @BelongsTo(() => User)
-  declare author?: User;
-
-  @ForeignKey(() => Category)
-  @AllowNull(true)
-  @Column({
-    type: DataType.UUID,
-    field: 'category_id',
-  })
-  declare categoryId?: string | null;
-
-  @BelongsTo(() => Category)
-  declare category?: Category;
+  @HasMany(() => Article)
+  declare articles?: Article[];
 
   @CreatedAt
   @Column({
