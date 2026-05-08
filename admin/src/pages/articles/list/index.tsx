@@ -7,6 +7,12 @@ interface ArticleItem {
   id: string;
   title: string;
   tags: string[];
+  tagDetails?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    color: string;
+  }>;
   category?: {
     id: string;
     name: string;
@@ -84,8 +90,21 @@ export default function ArticleList() {
     {
       title: '标签',
       dataIndex: 'tags',
-      render: (tags: string[]) =>
-        tags?.length ? (
+      render: (tags: string[], record: ArticleItem) => {
+        const tagDetails = record.tagDetails || [];
+        if (tagDetails.length > 0) {
+          return (
+            <Space size={6} wrap>
+              {tagDetails.map((tag) => (
+                <Tag key={tag.id} color={tag.color} style={{ color: '#fff' }}>
+                  {tag.name}
+                </Tag>
+              ))}
+            </Space>
+          );
+        }
+
+        return tags?.length ? (
           <Space size={6} wrap>
             {tags.map((tag) => (
               <Tag key={tag}>{tag}</Tag>
@@ -93,7 +112,8 @@ export default function ArticleList() {
           </Space>
         ) : (
           '暂无'
-        ),
+        );
+      },
     },
     {
       title: '更新时间',

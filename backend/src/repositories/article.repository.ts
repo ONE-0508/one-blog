@@ -1,11 +1,14 @@
 import { Article } from '@/models/article.model';
+import { ArticleTag } from '@/models/article-tag.model';
 import { Category } from '@/models/category.model';
+import { Tag, TagStatus } from '@/models/tag.model';
 import { User } from '@/models/user.model';
 
 export interface ArticleListOptions {
   page: number;
   pageSize: number;
   categoryId?: string;
+  tagId?: string;
 }
 
 export interface ArticleListResult {
@@ -22,6 +25,25 @@ class ArticleRepository {
     categoryId?: string | null;
   }): Promise<Article> {
     return Article.create(data);
+  }
+
+  async setArticleTags(articleId: string, tagIds: string[]): Promise<void> {
+    await ArticleTag.destroy({
+      where: {
+        articleId,
+      },
+    });
+
+    if (tagIds.length === 0) {
+      return;
+    }
+
+    await ArticleTag.bulkCreate(
+      tagIds.map(tagId => ({
+        articleId,
+        tagId,
+      }))
+    );
   }
 
   async findById(
@@ -45,13 +67,23 @@ class ArticleRepository {
               model: Category,
               attributes: ['id', 'name', 'slug', 'description', 'sort', 'status'],
             },
+            {
+              model: Tag,
+              as: 'tagDetails',
+              attributes: ['id', 'name', 'slug', 'description', 'color', 'status'],
+              through: { attributes: [] },
+              where: {
+                isDeleted: false,
+              },
+              required: false,
+            },
           ]
         : [],
     });
   }
 
   async findAndCount(options: ArticleListOptions): Promise<ArticleListResult> {
-    const { page, pageSize, categoryId } = options;
+    const { page, pageSize, categoryId, tagId } = options;
     const offset = (page - 1) * pageSize;
 
     const result = await Article.findAndCountAll({
@@ -71,7 +103,35 @@ class ArticleRepository {
           model: Category,
           attributes: ['id', 'name', 'slug', 'description', 'sort', 'status'],
         },
+        ...(tagId
+          ? [
+              {
+                model: Tag,
+                as: 'tagDetails',
+                attributes: ['id', 'name', 'slug', 'description', 'color', 'status'],
+                through: { attributes: [] },
+                where: {
+                  id: tagId,
+                  isDeleted: false,
+                  status: TagStatus.ACTIVE,
+                },
+                required: true,
+              },
+            ]
+          : [
+              {
+                model: Tag,
+                as: 'tagDetails',
+                attributes: ['id', 'name', 'slug', 'description', 'color', 'status'],
+                through: { attributes: [] },
+                where: {
+                  isDeleted: false,
+                },
+                required: false,
+              },
+            ]),
       ],
+      distinct: true,
     });
 
     return {

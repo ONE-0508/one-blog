@@ -57,11 +57,16 @@ export class ArticleController {
         title?: string;
         content?: string;
         tags?: string[];
+        tagIds?: string[];
         categoryId?: string | null;
       };
+      const { tagIds } = req.body as { tagIds?: string[] };
 
-      if (!Array.isArray(tags)) {
+      if (tags !== undefined && !Array.isArray(tags)) {
         throw new BadRequestError('Tags must be an array');
+      }
+      if (tagIds !== undefined && !Array.isArray(tagIds)) {
+        throw new BadRequestError('Tag ids must be an array');
       }
 
       const authorId = req.user?.id;
@@ -72,7 +77,8 @@ export class ArticleController {
       const article = await articleService.createArticle({
         title: title ?? '',
         content: content ?? '',
-        tags,
+        tags: tags ?? [],
+        tagIds,
         authorId,
         categoryId,
       });
@@ -99,17 +105,23 @@ export class ArticleController {
         title?: string;
         content?: string;
         tags?: string[];
+        tagIds?: string[];
         categoryId?: string | null;
       };
+      const { tagIds } = req.body as { tagIds?: string[] };
 
       if (tags !== undefined && !Array.isArray(tags)) {
         throw new BadRequestError('Tags must be an array');
+      }
+      if (tagIds !== undefined && !Array.isArray(tagIds)) {
+        throw new BadRequestError('Tag ids must be an array');
       }
 
       if (
         title === undefined &&
         content === undefined &&
         tags === undefined &&
+        tagIds === undefined &&
         categoryId === undefined
       ) {
         throw new BadRequestError('No fields to update');
@@ -119,6 +131,7 @@ export class ArticleController {
         title,
         content,
         tags,
+        tagIds,
         categoryId,
       });
 

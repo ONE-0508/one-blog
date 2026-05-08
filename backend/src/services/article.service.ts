@@ -1,5 +1,6 @@
 import { articleRepository } from '@/repositories/article.repository';
 import { categoryService } from '@/services/category.service';
+import { tagService } from '@/services/tag.service';
 import { BadRequestError, NotFoundError } from '@/utils/AppError';
 import type { Article } from '@/models/article.model';
 
@@ -7,6 +8,7 @@ export interface CreateArticleInput {
   title: string;
   content: string;
   tags: string[];
+  tagIds?: string[];
   authorId: string;
   categoryId?: string | null;
 }
@@ -15,6 +17,7 @@ export interface UpdateArticleInput {
   title?: string;
   content?: string;
   tags?: string[];
+  tagIds?: string[];
   categoryId?: string | null;
 }
 
@@ -30,14 +33,27 @@ class ArticleService {
     this.validateTitle(input.title);
     this.validateContent(input.content);
     const categoryId = await this.resolveCategoryId(input.categoryId);
+    const tags = await tagService.ensureActiveTags(input.tagIds ?? []);
+    const tagNames = this.resolveLegacyTagNames(input.tags, tags);
 
-    return articleRepository.create({
+    const article = await articleRepository.create({
       title: input.title,
       content: input.content,
-      tags: input.tags,
+      tags: tagNames,
       authorId: input.authorId,
       categoryId,
     });
+
+    await articleRepository.setArticleTags(
+      article.id,
+      tags.map(tag => tag.id)
+    );
+
+    const created = await articleRepository.findById(article.id, {
+      includeAuthor: true,
+    });
+
+    return created ?? article;
   }
 
   async updateArticle(id: string, input: UpdateArticleInput): Promise<Article> {
@@ -53,18 +69,41 @@ class ArticleService {
       this.validateContent(input.content);
     }
 
-    const payload: Partial<Article> = { ...input } as Partial<Article>;
+    const { tagIds: _tagIds, ...articleInput } = input;
+    void _tagIds;
+    const payload: Partial<Article> = { ...articleInput } as Partial<Article>;
     if (input.categoryId !== undefined) {
       payload.categoryId = await this.resolveCategoryId(input.categoryId);
     }
+    if (input.tagIds !== undefined) {
+      const tags = await tagService.ensureActiveTags(input.tagIds);
+      payload.tags = this.resolveLegacyTagNames(input.tags, tags);
+    }
 
-    const updated = await articleRepository.updateById(id, payload);
-
-    if (!updated) {
+    const existing = await articleRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Article not found');
     }
 
-    return updated;
+    let updated = existing;
+    if (Object.keys(payload).length > 0) {
+      const updatedArticle = await articleRepository.updateById(id, payload);
+      if (!updatedArticle) {
+        throw new NotFoundError('Article not found');
+      }
+      updated = updatedArticle;
+    }
+
+    if (input.tagIds !== undefined) {
+      const tagIds = tagService.normalizeTagIds(input.tagIds);
+      await articleRepository.setArticleTags(id, tagIds);
+    }
+
+    const refreshed = await articleRepository.findById(id, {
+      includeAuthor: true,
+    });
+
+    return refreshed ?? updated;
   }
 
   async deleteArticle(id: string): Promise<void> {
@@ -130,6 +169,17 @@ class ArticleService {
 
     const category = await categoryService.ensureActiveCategory(categoryId);
     return category.id;
+  }
+
+  private resolveLegacyTagNames(
+    inputTags: string[] | undefined,
+    tagDetails: { name: string }[]
+  ): string[] {
+    if (tagDetails.length > 0) {
+      return tagDetails.map(tag => tag.name);
+    }
+
+    return Array.isArray(inputTags) ? inputTags.map(tag => String(tag).trim()).filter(Boolean) : [];
   }
 }
 

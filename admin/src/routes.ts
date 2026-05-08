@@ -25,6 +25,10 @@ export const routes: IRoute[] = [
         key: 'articles/categories',
       },
       {
+        name: 'menu.articles.tags',
+        key: 'articles/tags',
+      },
+      {
         name: 'menu.articles.editor',
         key: 'articles/editor',
         ignore: true,

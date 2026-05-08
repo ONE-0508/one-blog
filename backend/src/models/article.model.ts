@@ -10,9 +10,12 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { User } from '@/models/user.model';
 import { Category } from '@/models/category.model';
+import { Tag } from '@/models/tag.model';
+import { ArticleTag } from '@/models/article-tag.model';
 
 @Table({
   tableName: 'articles',
@@ -95,6 +98,9 @@ export class Article extends Model {
 
   @BelongsTo(() => Category)
   declare category?: Category;
+
+  @BelongsToMany(() => Tag, () => ArticleTag)
+  declare tagDetails?: Tag[];
 
   @CreatedAt
   @Column({

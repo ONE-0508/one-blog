@@ -13,6 +13,13 @@ interface CategoryOption {
   value: string;
 }
 
+interface TagOption {
+  label: string;
+  value: string;
+  color: string;
+  status: 'active' | 'inactive';
+}
+
 export default function ArticleEditor() {
   const history = useHistory();
   const location = useLocation();
@@ -20,6 +27,7 @@ export default function ArticleEditor() {
   const articleId = typeof query.id === 'string' ? query.id : undefined;
   const [loading, setLoading] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+  const [tagOptions, setTagOptions] = useState<TagOption[]>([]);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -40,6 +48,25 @@ export default function ArticleEditor() {
   }, []);
 
   useEffect(() => {
+    axios
+      .get('/tags/options')
+      .then((res) => {
+        const tags = res.data?.data?.tags || [];
+        setTagOptions(
+          tags.map((tag) => ({
+            label: tag.name,
+            value: tag.id,
+            color: tag.color,
+            status: tag.status,
+          }))
+        );
+      })
+      .catch(() => {
+        Message.error('标签列表加载失败');
+      });
+  }, []);
+
+  useEffect(() => {
     if (!articleId) return;
     setLoading(true);
     axios
@@ -51,7 +78,7 @@ export default function ArticleEditor() {
             title: article.title,
             categoryId: article.categoryId || article.category?.id,
             content: article.content,
-            tags: (article.tags || []).join(', '),
+            tagIds: (article.tagDetails || []).map((tag) => tag.id),
           });
         }
       })
@@ -70,12 +97,7 @@ export default function ArticleEditor() {
         title: values.title,
         categoryId: values.categoryId,
         content: values.content,
-        tags: values.tags
-          ? values.tags
-              .split(',')
-              .map((item: string) => item.trim())
-              .filter(Boolean)
-          : [],
+        tagIds: values.tagIds || [],
       };
 
       setLoading(true);
@@ -106,8 +128,32 @@ export default function ArticleEditor() {
         >
           <Input placeholder="请输入标题" />
         </Form.Item>
-        <Form.Item label="标签" field="tags">
-          <Input placeholder="多个标签用英文逗号分隔" />
+        <Form.Item label="标签" field="tagIds">
+          <Select
+            mode="multiple"
+            allowClear
+            showSearch
+            placeholder="请选择标签"
+          >
+            {tagOptions.map((tag) => (
+              <Select.Option key={tag.value} value={tag.value} disabled={tag.status !== 'active'}>
+                <span>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      marginRight: 6,
+                      backgroundColor: tag.color,
+                    }}
+                  />
+                  {tag.label}
+                  {tag.status !== 'active' ? '（禁用）' : ''}
+                </span>
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item label="分类" field="categoryId">
           <Select

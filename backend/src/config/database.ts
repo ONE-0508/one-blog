@@ -145,7 +145,9 @@ const sequelize = createSequelizeInstance();
 import { User } from '@/models/user.model';
 import { Category } from '@/models/category.model';
 import { Article } from '@/models/article.model';
-sequelize.addModels([User, Category, Article]);
+import { Tag } from '@/models/tag.model';
+import { ArticleTag } from '@/models/article-tag.model';
+sequelize.addModels([User, Category, Article, Tag, ArticleTag]);
 
 /**
  * 测试数据库连接
@@ -186,8 +188,10 @@ export const syncDatabase = async (force: boolean = false): Promise<void> => {
 
     await User.sync();
     await Category.sync();
+    await Tag.sync();
     await ensureArticleCategoryColumn();
     await Article.sync();
+    await ArticleTag.sync();
     logger.info('Database synchronized successfully.');
   } catch (error) {
     logger.error('Error synchronizing database:', error);

@@ -12,6 +12,7 @@ import { testDatabaseConnection, syncDatabase } from '@/config/database';
 import authRoutes from '@/routes/auth.routes';
 import articleRoutes from '@/routes/article.routes';
 import categoryRoutes from '@/routes/category.routes';
+import tagRoutes from '@/routes/tag.routes';
 import { swaggerSpec } from '@/config/swagger';
 import swaggerUi from 'swagger-ui-express';
 
@@ -156,6 +157,7 @@ class App {
     this.app.use('/api/v1/auth', authRoutes);
     this.app.use('/api/v1/articles', articleRoutes);
     this.app.use('/api/v1/categories', categoryRoutes);
+    this.app.use('/api/v1/tags', tagRoutes);
     // this.app.use('/api/v1/notes', noteRoutes);
     // this.app.use('/api/v1/comments', commentRoutes);
     // this.app.use('/api/v1/projects', projectRoutes);
