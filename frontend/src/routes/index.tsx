@@ -13,6 +13,8 @@ import AboutPage from '../pages/AboutPage';
 import GuestbookPage from '../pages/GuestbookPage';
 import CategoriesPage from '../pages/CategoriesPage';
 import CategoryDetailPage from '../pages/CategoryDetailPage';
+import TagsPage from '../pages/TagsPage';
+import TagDetailPage from '../pages/TagDetailPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -81,6 +83,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CategoriesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'tags',
+        element: (
+          <ProtectedRoute>
+            <TagsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'tag/:slug',
+        element: (
+          <ProtectedRoute>
+            <TagDetailPage />
           </ProtectedRoute>
         ),
       },

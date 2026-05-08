@@ -14,11 +14,21 @@ export interface ArticleCategory {
   status?: 'active' | 'inactive';
 }
 
+export interface ArticleTag {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  color: string;
+  status?: 'active' | 'inactive';
+}
+
 export interface Article {
   id: string;
   title: string;
   content: string;
   tags: string[];
+  tagDetails?: ArticleTag[];
   author?: ArticleAuthor;
   category?: ArticleCategory | null;
   categoryId?: string | null;

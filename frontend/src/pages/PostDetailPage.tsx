@@ -5,6 +5,7 @@ import Sidebar from '../components/layout/Sidebar';
 import { fetchArticleById } from '../services/articles';
 import type { Article } from '../types/article';
 import { formatDate } from '../utils/formatDate';
+import { getSoftTagStyle } from '../utils/tagColor';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -55,6 +56,14 @@ function PostDetailPage() {
   }, [id]);
 
   const authorName = article?.author?.displayName ?? article?.author?.username ?? '匿名作者';
+  const displayTags = article?.tagDetails?.length
+    ? article.tagDetails
+    : (article?.tags ?? []).map(tag => ({
+        id: tag,
+        name: tag,
+        slug: '',
+        color: '',
+      }));
 
   return (
     <div className="grid gap-6 md:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)] md:items-start">
@@ -192,15 +201,23 @@ function PostDetailPage() {
               </ReactMarkdown>
             </div>
 
-            {article.tags.length > 0 && (
+            {displayTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {article.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-chip-border bg-chip-bg px-2 py-0.5 text-xs text-text-secondary"
+                {displayTags.map(tag => (
+                  <Link
+                    key={tag.id}
+                    to={tag.slug ? `/tag/${tag.slug}` : '#'}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-chip-border bg-chip-bg px-2 py-0.5 text-xs text-text-secondary hover:text-text-primary"
+                    style={getSoftTagStyle(tag.color)}
                   >
-                    {tag}
-                  </span>
+                    {tag.color && (
+                      <span
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ backgroundColor: tag.color }}
+                      />
+                    )}
+                    {tag.name}
+                  </Link>
                 ))}
               </div>
             )}
